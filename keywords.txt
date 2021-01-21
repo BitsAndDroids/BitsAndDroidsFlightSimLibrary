@@ -1,0 +1,39 @@
+BitsAndDroidsFlightConnector	KEYWORD1
+dataHandling	KEYWORD2
+getActiveCom1	KEYWORD2
+getActiveCom2	KEYWORD2
+getStandByCom1	KEYWORD2
+getStandByCom2	KEYWORD2
+simpleInputHandling KEYWORD2
+advancedInputHandling KEYWORD2
+superAdvancerInputHandling KEYWORD2
+getApVerticalSpeed	KEYWORD2
+getApAltLock	KEYWORD2
+getApHeadingLock	KEYWORD2
+getKohlmanAltimeter	KEYWORD2
+getBarPressure	KEYWORD2
+getIndicatedAirspeed KEYWORD2
+getIndicatedAltitude KEYWORD2
+getIndicatedHeading KEYWORD2
+getIndicatedGPSGroundspeed KEYWORD2
+getTrueVerticalSpeed KEYWORD2
+
+String getFuelTotalPercentage KEYWORD2
+
+getLightTaxiOn KEYWORD2                  
+getLightStrobeOn KEYWORD2        
+getLightPanelOn KEYWORD2         
+getLightRecognitionOn KEYWORD2   
+getLightWingOn KEYWORD2          
+getLightLogoOn KEYWORD2          
+getLightCabinOn KEYWORD2         
+getLightHeadOn KEYWORD2          
+getLightBrakeOn KEYWORD2         
+getLightNavOn KEYWORD2           
+getLightBeaconOn KEYWORD2        
+getLightLandingOn KEYWORD2 
+
+getStallWarningOn KEYWORD2         
+getOverspeedWarningOn KEYWORD2           
+
+dot     KEYWORD2
