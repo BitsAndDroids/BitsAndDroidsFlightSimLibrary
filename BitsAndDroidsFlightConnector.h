@@ -7,6 +7,7 @@ class BitsAndDroidsFlightConnector {
   // user-accessible "public" interface
  public:
   BitsAndDroidsFlightConnector(bool isLeonardoMicro);
+  void switchHandling();
   void dataHandling();
   void simpleInputHandling(int throttlePin, float maxVal);
   void advancedInputHandling(int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin,
@@ -15,13 +16,16 @@ class BitsAndDroidsFlightConnector {
                                   byte eng3Percentage, byte eng4Percentage,
                                   byte receivedMixturePercentage);
   void propsInputHandling(int propPin1, int propPin2, float maxVal);
-
+  void setTeensy(bool);
   void setEMA_a(float a);
   byte getPercentage(int value, float maxVal);
 
   // Ap
   String getApVerticalSpeed();
   String getApAltLock();
+
+  // GPS
+  String getGpsCourseToSteer();
 
   // Avionics
   String getApHeadingLock();
@@ -249,7 +253,12 @@ class BitsAndDroidsFlightConnector {
   byte sendCom2FractInc();
   byte sendCom2FractIncCarry();
   byte sendCom2FractDecr();
-  byte sendCom2FractDecrCarry();                                                                                                                                                                                            
+  byte sendCom2FractDecrCarry();
+
+  byte sendCom1WholeInc();
+  byte sendCom1WholeDec();
+  byte sendCom2WholeInc();
+  byte sendCom2WholeDec();
 
 
   // Nav
@@ -567,6 +576,11 @@ class BitsAndDroidsFlightConnector {
   byte valSendCom2FractDecr = 120;
   byte valSendCom2FractDecrCarry = 122;
 
+  byte valSendCom1WholeDec = 111;
+  byte valSendCom1WholeInc = 112;
+  byte valSendCom2WholeDec = 113;
+  byte valSendCom2WholeInc = 114;
+
   byte valSendSwapCom1 = 116;
   byte valSendSwapCom2 = 117;
 
@@ -574,16 +588,6 @@ class BitsAndDroidsFlightConnector {
   String valSendXpndrSet = "202";
 
   // Nav
-  byte valSendMhzNavStandby1Plus = 108;
-  byte valSendMhzNavStandby1Min = 109;
-  byte valSendKhzNavStandby1Plus = 110;
-  byte valSendKhzNavStandby1Min = 111;
-
-  byte valSendMhzNavStandby2Plus = 112;
-  byte valSendMhzNavStandby2Min = 113;
-  byte valSendKhzNavStandby2Plus = 114;
-  byte valSendKhzNavStandby2Min = 115;
-
   byte valSendIncWholeNav1 = 132;
   byte valSendDecWholeNav1 = 133;
   byte valSendIncWholeNav2 = 134;
@@ -600,6 +604,8 @@ class BitsAndDroidsFlightConnector {
   // G1000
   byte valSendG1000ZoomMapIn = 250;
   byte valSendG1000ZoomMapOut = 251;
+
+
 
   byte lastPrefix = 0;
 
@@ -713,6 +719,9 @@ class BitsAndDroidsFlightConnector {
   String navRadialError1 = "";
   String navVorLationalt1 = "";
 
+  // GPS
+  String gpsCourseToSteer = "";
+
   // DME
   String navDme1 = "";
   String navDme2 = "";
@@ -778,7 +787,10 @@ class BitsAndDroidsFlightConnector {
 
   // Plane data
   String planeName = "";
-
+  String receivedValue;
+  String prefix = "";
+  String cutValue = "";
+  bool isTeensy = false;
   float EMA_a = 0.1;
   int EMA_S = 0;
 };

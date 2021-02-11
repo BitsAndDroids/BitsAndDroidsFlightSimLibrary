@@ -28,10 +28,10 @@ void loop() {
    lcd.print(connector.getActiveCom2());
    lcd.setCursor(8,0);
      //retrieve standby com 1 from the connector
-   lcd.print(connector.getStandByCom1());
+   lcd.print(connector.getStandbyCom1());
    lcd.setCursor(8,1);
    //retrieve standby com 2 from the connector
-   lcd.print(connector.getStandByCom2());
+   lcd.print(connector.getStandbyCom2());
 }
 
   

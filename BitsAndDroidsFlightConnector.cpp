@@ -10,6 +10,10 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
     Serial.setTimeout(50);
   }
 }
+
+void BitsAndDroidsFlightConnector::setTeensy(bool teensy){
+    isTeensy = teensy;
+}
 void BitsAndDroidsFlightConnector::sendCombinedThrottleValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i %i %i %i", "199", engines[0],
                          engines[1], engines[2], engines[3], mixturePercentage);
@@ -37,10 +41,28 @@ bool convBool(String input) {
 }
 
 void BitsAndDroidsFlightConnector::dataHandling() {
+
+    if(!isTeensy){
   if (Serial.available() > 0) {
-    String value = Serial.readStringUntil('\n');
-    String prefix = value.substring(0, 3);
-    String receivedValue = value.substring(3);
+    receivedValue = Serial.readStringUntil('\n');
+         switchHandling();
+
+  }
+
+    } /*if(isTeensy){
+        if (SerialUSB1.available() > 0) {
+          receivedValue = SerialUSB1.readStringUntil('\n');
+                 switchHandling();
+
+        }
+
+    }*/
+
+}
+void BitsAndDroidsFlightConnector::switchHandling(){
+
+    prefix = receivedValue.substring(0, 3);
+    cutValue = receivedValue.substring(3);
     int prefixVal = prefix.toInt();
     lastPrefix = prefixVal;
 
@@ -49,412 +71,417 @@ void BitsAndDroidsFlightConnector::dataHandling() {
 
       // lights
       case 33: {
-        lightTaxiOn = convBool(receivedValue);
+        lightTaxiOn = convBool(cutValue);
         break;
       }
       case 34: {
-        lightStrobeOn = convBool(receivedValue);
+        lightStrobeOn = convBool(cutValue);
         break;
       }
 
       case 35: {
-        lightPanelOn = convBool(receivedValue);
+        lightPanelOn = convBool(cutValue);
         break;
       }
       case 36: {
-        lightRecognitionOn = convBool(receivedValue);
+        lightRecognitionOn = convBool(cutValue);
         break;
       }
       case 37: {
-        lightWingOn = convBool(receivedValue);
+        lightWingOn = convBool(cutValue);
         break;
       }
       case 38: {
-        lightLogoOn = convBool(receivedValue);
+        lightLogoOn = convBool(cutValue);
         break;
       }
       case 39: {
-        lightCabinOn = convBool(receivedValue);
+        lightCabinOn = convBool(cutValue);
         break;
       }
       case 40: {
-        lightHeadOn = convBool(receivedValue);
+        lightHeadOn = convBool(cutValue);
         break;
       }
       case 41: {
-        lightBrakeOn = convBool(receivedValue);
+        lightBrakeOn = convBool(cutValue);
         break;
       }
       case 42: {
-        lightNavOn = convBool(receivedValue);
+        lightNavOn = convBool(cutValue);
         break;
       }
       case 43: {
-        lightBeaconOn = convBool(receivedValue);
+        lightBeaconOn = convBool(cutValue);
         break;
       }
       case 44: {
-        lightLandingOn = convBool(receivedValue);
+        lightLandingOn = convBool(cutValue);
         break;
       }
       case 275: {
-        fuelTotalPercentage = receivedValue;
+        fuelTotalPercentage = cutValue;
         break;
       }
 
         // warnings
       case 333: {
-        stallWarning = convBool(receivedValue);
+        stallWarning = convBool(cutValue);
         break;
       }
       case 334: {
-        overspeedWarning = convBool(receivedValue);
+        overspeedWarning = convBool(cutValue);
         break;
       }
+        //GPS
+    case 454:{
+     gpsCourseToSteer = cutValue;
+    }
 
       // Flaps
       case 510: {
-        flapsHandlePct = receivedValue;
+        flapsHandlePct = cutValue;
         break;
       }
       case 511: {
-        flapsHandleIndex = receivedValue;
+        flapsHandleIndex = cutValue;
         break;
       }
       case 512: {
-        flapsNumHandlePos = receivedValue;
+        flapsNumHandlePos = cutValue;
         break;
       }
       case 513: {
-        trailingEdgeFlapsLeftPercent = receivedValue;
+        trailingEdgeFlapsLeftPercent = cutValue;
         break;
       }
       case 514: {
-        trailingEdgeFlapsRightPercent = receivedValue;
+        trailingEdgeFlapsRightPercent = cutValue;
         break;
       }
       case 515: {
-        trailingEdgeFlapsLeftAngle = receivedValue;
+        trailingEdgeFlapsLeftAngle = cutValue;
         break;
       }
       case 516: {
-        trailingEdgeFlapsRightAngle = receivedValue;
+        trailingEdgeFlapsRightAngle = cutValue;
         break;
       }
       case 517: {
-        leadingEdgeFlapsLeftPct = receivedValue;
+        leadingEdgeFlapsLeftPct = cutValue;
         break;
       }
       case 518: {
-        leadingEdgeFlapsRightPct = receivedValue;
+        leadingEdgeFlapsRightPct = cutValue;
         break;
       }
       case 519: {
-        leadingEdgeFlapsLeftAngle = receivedValue;
+        leadingEdgeFlapsLeftAngle = cutValue;
         break;
       }
       case 520: {
-        leadingEdgeFlapsRightAngle = receivedValue;
+        leadingEdgeFlapsRightAngle = cutValue;
         break;
       }
 
       // Gears
       case 526: {
-        gearHandlePos = convBool(receivedValue);
+        gearHandlePos = convBool(cutValue);
         break;
       }
       case 527: {
-        gearHydraulicPressure = receivedValue;
+        gearHydraulicPressure = cutValue;
         break;
       }
       case 528: {
-        tailWheelLock = convBool(receivedValue);
+        tailWheelLock = convBool(cutValue);
         break;
       }
       case 529: {
-        gearCenterPositionPct = receivedValue;
+        gearCenterPositionPct = cutValue;
         break;
       }
       case 530: {
-        gearLeftPositionPct = receivedValue;
+        gearLeftPositionPct = cutValue;
         break;
       }
       case 531: {
-        gearRightPositionPct = receivedValue;
+        gearRightPositionPct = cutValue;
         break;
       }
       case 532: {
-        gearTailPositionPct = receivedValue;
+        gearTailPositionPct = cutValue;
         break;
       }
       case 533: {
-        gearAuxPosition = receivedValue;
+        gearAuxPosition = cutValue;
         break;
       }
       case 536: {
-        gearTotalPct = receivedValue;
+        gearTotalPct = cutValue;
         break;
       }
 
       // AP
       case 576: {
-        APAvailable = convBool(receivedValue);
+        APAvailable = convBool(cutValue);
         break;
       }
       case 577: {
-        APMasterOn = convBool(receivedValue);
+        APMasterOn = convBool(cutValue);
         break;
       }
       case 579: {
-        APWingLevelerOn = convBool(receivedValue);
+        APWingLevelerOn = convBool(cutValue);
         break;
       }
       case 580: {
-        APNav1LockOn = convBool(receivedValue);
+        APNav1LockOn = convBool(cutValue);
         break;
       }
       case 581: {
-        APHeadingLockOn = convBool(receivedValue);
+        APHeadingLockOn = convBool(cutValue);
         break;
       }
       case 583: {
-        APAltitudeLockOn = convBool(receivedValue);
+        APAltitudeLockOn = convBool(cutValue);
         break;
       }
       case 585: {
-        APAttitudeLockOn = convBool(receivedValue);
+        APAttitudeLockOn = convBool(cutValue);
         break;
       }
       case 586: {
-        APGlideslopeHoldOn = convBool(receivedValue);
+        APGlideslopeHoldOn = convBool(cutValue);
         break;
       }
       case 588: {
-        APApproachHoldOn = convBool(receivedValue);
+        APApproachHoldOn = convBool(cutValue);
         break;
       }
       case 589: {
-        APBackcourseHoldOn = convBool(receivedValue);
+        APBackcourseHoldOn = convBool(cutValue);
         break;
       }
       case 591: {
-        APFlightDirectorOn = convBool(receivedValue);
+        APFlightDirectorOn = convBool(cutValue);
         break;
       }
       case 594: {
-        APAirspeedHoldOn = convBool(receivedValue);
+        APAirspeedHoldOn = convBool(cutValue);
         break;
       }
       case 596: {
-        APMachHoldOn = convBool(receivedValue);
+        APMachHoldOn = convBool(cutValue);
         break;
       }
       case 598: {
-        APYawDampenerOn = convBool(receivedValue);
+        APYawDampenerOn = convBool(cutValue);
         break;
       }
       case 600: {
-        APAutothrottleArm = convBool(receivedValue);
+        APAutothrottleArm = convBool(cutValue);
         break;
       }
       case 601: {
-        APTakeoffPowerOn = convBool(receivedValue);
+        APTakeoffPowerOn = convBool(cutValue);
         break;
       }
       case 602: {
-        APAutothrottleOn = convBool(receivedValue);
+        APAutothrottleOn = convBool(cutValue);
         break;
       }
       case 604: {
-        APVerticalHoldOn = convBool(receivedValue);
+        APVerticalHoldOn = convBool(cutValue);
         break;
       }
       case 605: {
-        APRPMHoldOn = convBool(receivedValue);
+        APRPMHoldOn = convBool(cutValue);
         break;
       }
 
       // Rudder trim
       case 498: {
-        elevatorTrimPos = receivedValue;
+        elevatorTrimPos = cutValue;
         break;
       }
       case 500: {
-        elevatorTrimPct = receivedValue;
+        elevatorTrimPct = cutValue;
         break;
       }
       case 562: {
-        aileronTrimDegr = receivedValue;
+        aileronTrimDegr = cutValue;
         break;
       }
       case 563: {
-        aileronTrimPct = receivedValue;
+        aileronTrimPct = cutValue;
         break;
       }
       case 566: {
-        rudderTrimDegr = receivedValue;
+        rudderTrimDegr = cutValue;
         break;
       }
       case 567: {
-        rudderTrimPct = receivedValue;
+        rudderTrimPct = cutValue;
         break;
       }
 
       case 330: {
-        trueVerticalSpeed = receivedValue;
+        trueVerticalSpeed = cutValue;
         break;
       }
 
       case 326: {
-        indicatedAirspeed = receivedValue;
+        indicatedAirspeed = cutValue;
         break;
       }
       case 335: {
-        indicatedAltitude = receivedValue;
+        indicatedAltitude = cutValue;
         break;
       }
 
       case 337: {
-        kohlmanAltimeter = inhg(receivedValue);
+        kohlmanAltimeter = inhg(cutValue);
         break;
       }
       case 344: {
-        indicatedHeading = receivedValue;
+        indicatedHeading = cutValue;
         break;
       }
       case 430: {
-        indicatedGPSGroundspeed = receivedValue;
+        indicatedGPSGroundspeed = cutValue;
         break;
       }
       case 582: {
-        apHeadingLock = receivedValue;
+        apHeadingLock = cutValue;
         break;
       }
       case 584: {
-        apAltLock = receivedValue;
+        apAltLock = cutValue;
         break;
       }
       case 590: {
-        apVerticalSpeed = receivedValue;
+        apVerticalSpeed = cutValue;
         break;
       }
       case 632: {
-        barPressure = receivedValue;
+        barPressure = cutValue;
         break;
       }
       case 900: {
-        activeCom1 = convertToFreq(receivedValue);
+        activeCom1 = convertToFreq(cutValue);
         break;
       }
       case 901: {
-        standByCom1 = convertToFreq(receivedValue);
+        standByCom1 = convertToFreq(cutValue);
         break;
       }
       case 902: {
-        activeCom2 = convertToFreq(receivedValue);
+        activeCom2 = convertToFreq(cutValue);
         break;
       }
       case 903: {
-        standByCom2 = convertToFreq(receivedValue);
+        standByCom2 = convertToFreq(cutValue);
         break;
       }
       case 910: {
-        activeNav1 = convertToNavFreq(receivedValue);
+        activeNav1 = convertToNavFreq(cutValue);
         break;
       }
       case 911: {
-        standbyNav1 = convertToNavFreq(receivedValue);
+        standbyNav1 = convertToNavFreq(cutValue);
         break;
       }
       case 912: {
-        activeNav2 = convertToNavFreq(receivedValue);
+        activeNav2 = convertToNavFreq(cutValue);
         break;
       }
       case 913: {
-        standbyNav2 = convertToNavFreq(receivedValue);
+        standbyNav2 = convertToNavFreq(cutValue);
         break;
       }
       case 914: {
-        navRadialError1 = receivedValue;
+        navRadialError1 = cutValue;
         break;
       }
       case 915: {
-        navVorLationalt1 = receivedValue;
+        navVorLationalt1 = cutValue;
         break;
       }
         // DME
       case 950: {
-        navDme1 = receivedValue;
+        navDme1 = cutValue;
         break;
       }
       case 951: {
-        navDme2 = receivedValue;
+        navDme2 = cutValue;
         break;
       }
       case 952: {
-        navDmeSpeed1 = receivedValue;
+        navDmeSpeed1 = cutValue;
         break;
       }
       case 953: {
-        navDmeSpeed2 = receivedValue;
+        navDmeSpeed2 = cutValue;
         break;
       }
 
         // ADF
       case 954: {
-        adfActiveFreq1 = receivedValue;
+        adfActiveFreq1 = cutValue;
         break;
       }
       case 955: {
-        adfStandbyFreq1 = receivedValue;
+        adfStandbyFreq1 = cutValue;
         break;
       }
       case 956: {
-        adfRadial1 = receivedValue;
+        adfRadial1 = cutValue;
         break;
       }
       case 957: {
-        adfSignal1 = receivedValue;
+        adfSignal1 = cutValue;
         break;
       }
       case 958: {
-        adfActiveFreq2 = convertToNavFreq(receivedValue);
+        adfActiveFreq2 = convertToNavFreq(cutValue);
         break;
       }
       case 959: {
-        adfStandbyFreq2 = convertToNavFreq(receivedValue);
+        adfStandbyFreq2 = convertToNavFreq(cutValue);
         break;
       }
       case 960: {
-        adfRadial2 = receivedValue;
+        adfRadial2 = cutValue;
         break;
       }
       case 961: {
-        adfSignal2 = receivedValue;
+        adfSignal2 = cutValue;
         break;
       }
 
       // Transponder
       case 962: {
-        transponderCode1 = receivedValue;
+        transponderCode1 = cutValue;
         break;
       }
       case 963: {
-        transponderCode2 = receivedValue;
+        transponderCode2 = cutValue;
         break;
       }
 
       // PLANE DATA
       case 999: {
-        planeName = receivedValue;
+        planeName = cutValue;
         break;
       }
 
       default:
         break;
     }
-  }
+
 }
+
 
 void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
                                                       int propPin2,
@@ -583,7 +610,9 @@ int BitsAndDroidsFlightConnector::getLastPrefix() { return lastPrefix; }
 // Set jitter algorithm EMA_a
 void BitsAndDroidsFlightConnector::setEMA_a(float a) { EMA_a = a; }
 // RECEIVING VALUES
+// GPS
 
+String BitsAndDroidsFlightConnector::getGpsCourseToSteer(){return gpsCourseToSteer;}
 // Ap
 String BitsAndDroidsFlightConnector::getApVerticalSpeed() {
   return apVerticalSpeed;
@@ -1020,7 +1049,10 @@ String BitsAndDroidsFlightConnector::sendStandbyCom2Set(char* value) {
 
 byte BitsAndDroidsFlightConnector::sendSwapCom1() { return valSendSwapCom1; }
 byte BitsAndDroidsFlightConnector::sendSwapCom2() { return valSendSwapCom2; }
-
+byte BitsAndDroidsFlightConnector::sendCom1WholeDec(){return valSendCom1WholeDec;}
+byte BitsAndDroidsFlightConnector::sendCom1WholeInc(){return valSendCom1WholeInc;}
+byte BitsAndDroidsFlightConnector::sendCom2WholeDec(){return valSendCom2WholeDec;}
+byte BitsAndDroidsFlightConnector::sendCom2WholeInc(){return valSendCom2WholeInc;}
 byte BitsAndDroidsFlightConnector::sendCom1FractInc() {
   return valSendCom1FractInc;
 }
@@ -1053,31 +1085,6 @@ String BitsAndDroidsFlightConnector::sendXpndrSet(char* Xpndr) {
 }
 
 // Nav
-byte BitsAndDroidsFlightConnector::sendMhzNavStandby1Plus() {
-  return valSendMhzNavStandby1Plus;
-}
-byte BitsAndDroidsFlightConnector::sendMhzNavStandby1Min() {
-  return valSendMhzNavStandby1Min;
-}
-byte BitsAndDroidsFlightConnector::sendKhzNavStandby1Plus() {
-  return valSendKhzNavStandby1Plus;
-}
-byte BitsAndDroidsFlightConnector::sendKhzNavStandby1Min() {
-  return valSendKhzNavStandby1Min;
-}
-
-byte BitsAndDroidsFlightConnector::sendMhzNavStandby2Plus() {
-  return valSendMhzNavStandby2Plus;
-}
-byte BitsAndDroidsFlightConnector::sendMhzNavStandby2Min() {
-  return valSendMhzNavStandby2Min;
-}
-byte BitsAndDroidsFlightConnector::sendKhzNavStandby2Plus() {
-  return valSendKhzNavStandby2Plus;
-}
-byte BitsAndDroidsFlightConnector::sendKhzNavStandby2Min() {
-  return valSendKhzNavStandby2Min;
-}
 
 byte BitsAndDroidsFlightConnector::sendIncWholeNav1() {
   return valSendIncWholeNav1;
