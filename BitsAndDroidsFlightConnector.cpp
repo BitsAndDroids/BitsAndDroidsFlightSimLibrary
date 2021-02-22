@@ -4,32 +4,34 @@
 
 
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
-    bool isLeonardoMicro) {
+  bool isLeonardoMicro) {
   if (isLeonardoMicro) {
     Serial.begin(115200);
     Serial.setTimeout(50);
   }
 }
 
-void BitsAndDroidsFlightConnector::setTeensy(bool teensy){
-    isTeensy = teensy;
-}
+
 void BitsAndDroidsFlightConnector::sendCombinedThrottleValues() {
-  packagedData = sprintf(valuesBuffer, "%s %i %i %i %i %i", "199", engines[0],
-                         engines[1], engines[2], engines[3], mixturePercentage);
+  packagedData = sprintf(valuesBuffer, "%s %i %i %i %i", "199", engines[0],
+                         engines[1], engines[2], engines[3]);
   Serial.println(valuesBuffer);
 }
 void BitsAndDroidsFlightConnector::sendCombinedPropValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i", "198", props[0], props[1]);
   Serial.println(valuesBuffer);
 }
+void BitsAndDroidsFlightConnector::sendCombinedMixtureValues() {
 
-byte BitsAndDroidsFlightConnector::getPercentage(int value, float maxVal) {
-  byte percentage = ((value / 100.0) / (maxVal / 100.0)) * 100;
-  if (percentage == 99) {
-    percentage = 100;
-  }
-  return percentage;
+         packagedData = sprintf(valuesBuffer, "%s %i %i", "115", mixturePercentage[0], mixturePercentage[1]);
+
+
+  Serial.println(valuesBuffer);
+}
+
+byte BitsAndDroidsFlightConnector::getPercentage(int value, int minVal, float maxVal) {
+   byte percentage = map(value, minVal,maxVal, 0,100);
+   return percentage;
 }
 
 bool convBool(String input) {
@@ -42,21 +44,10 @@ bool convBool(String input) {
 
 void BitsAndDroidsFlightConnector::dataHandling() {
 
-    if(!isTeensy){
   if (Serial.available() > 0) {
     receivedValue = Serial.readStringUntil('\n');
-         switchHandling();
-
+    switchHandling();
   }
-
-    } /*if(isTeensy){
-        if (SerialUSB1.available() > 0) {
-          receivedValue = SerialUSB1.readStringUntil('\n');
-                 switchHandling();
-
-        }
-
-    }*/
 
 }
 void BitsAndDroidsFlightConnector::switchHandling(){
@@ -123,6 +114,14 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         fuelTotalPercentage = cutValue;
         break;
       }
+    case 312:{
+        feetAboveGround = cutValue.toInt();
+        break;
+    }
+      case 323: {
+        onGround = convBool(cutValue);
+        break;
+    }
 
         // warnings
       case 333: {
@@ -485,15 +484,20 @@ void BitsAndDroidsFlightConnector::switchHandling(){
 
 void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
                                                       int propPin2,
-                                                      float maxVal) {
+                                                      int minVal,float maxVal, bool reversed) {
   propValue1 = (EMA_a * analogRead(propPin1)) + ((1 - EMA_a) * propValue1);
   propValue2 = (EMA_a * analogRead(propPin2)) + ((1 - EMA_a) * propValue2);
   if (propValue1 != oldPropValue1 || propValue2 != oldPropValue2) {
     oldPropValue1 = propValue1;
     oldPropValue2 = propValue2;
+    if(!reversed){
+        prop1 = getPercentage(propValue1,minVal, maxVal);
+        prop2 = getPercentage(propValue2,minVal, maxVal);
+    } else{
+        prop1 = 100 - getPercentage(propValue1,minVal, maxVal);
+        prop2 = 100 - getPercentage(propValue2,minVal, maxVal);
+    }
 
-    prop1 = getPercentage(propValue1, maxVal);
-    prop2 = getPercentage(propValue2, maxVal);
 
     props[0] = prop1;
     props[1] = prop2;
@@ -501,17 +505,43 @@ void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
     sendCombinedPropValues();
   }
 }
+void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
+                                                      int mixturePin2,
+                                                      int minVal,float maxVal,bool reversed) {
+  mixtureValue1 = (EMA_a * analogRead(mixturePin1)) + ((1 - EMA_a) * mixtureValue1);
+  mixtureValue2 = (EMA_a * analogRead(mixturePin2)) + ((1 - EMA_a) * mixtureValue2);
+  if (mixtureValue1 != oldMixtureValue1 || mixtureValue2 != oldMixtureValue2) {
+    oldMixtureValue1 = mixtureValue1;
+    oldMixtureValue2 = mixtureValue2;
+    if(!reversed){
+    mixturePercentage[0] = getPercentage(mixtureValue1, minVal,maxVal);
+    mixturePercentage[1] = getPercentage(mixtureValue2, minVal,maxVal);
+    }
+    else{
+        mixturePercentage[0] = 100 - getPercentage(mixtureValue1, minVal,maxVal);
+        mixturePercentage[1] = 100 - getPercentage(mixtureValue2, minVal,maxVal);
+    }
+
+    sendCombinedMixtureValues();
+  }
+}
 void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin,
-                                                       float maxVal) {
+                                                       int minVal,float maxVal, bool reversed) {
   value = (EMA_a * analogRead(throttlePin)) + ((1 - EMA_a) * value);
 
   if (value != oldValue) {
     oldValue = value;
-    engine1 = getPercentage(value, maxVal);
-    engine2 = getPercentage(value, maxVal);
-    engine3 = getPercentage(value, maxVal);
-    engine4 = getPercentage(value, maxVal);
-    mixturePercentage = getPercentage(value, maxVal);
+    if(!reversed){
+    engine1 = getPercentage(value,minVal, maxVal);
+    engine2 = getPercentage(value, minVal,maxVal);
+    engine3 = getPercentage(value, minVal,maxVal);
+    engine4 = getPercentage(value, minVal,maxVal);
+    } else{
+        engine1 = 100 - getPercentage(value,minVal, maxVal);
+        engine2 = 100 - getPercentage(value,minVal, maxVal);
+        engine3 = 100 - getPercentage(value, minVal,maxVal);
+        engine4 = 100 - getPercentage(value, minVal,maxVal);
+    }
 
     engines[0] = engine1;
     engines[1] = engine2;
@@ -522,59 +552,66 @@ void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin,
   }
 }
 void BitsAndDroidsFlightConnector::advancedInputHandling(
-    int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin, int mixturePin,
-    float maxVal) {
+    int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin,int minVal,
+    float maxVal,bool reversed) {
   valueEng1 = (EMA_a * analogRead(eng1Pin)) + ((1 - EMA_a) * valueEng1);
   valueEng2 = (EMA_a * analogRead(eng2Pin)) + ((1 - EMA_a) * valueEng2);
   valueEng3 = (EMA_a * analogRead(eng3Pin)) + ((1 - EMA_a) * valueEng3);
   valueEng4 = (EMA_a * analogRead(eng4Pin)) + ((1 - EMA_a) * valueEng4);
-
-  mixtureValue =
-      (EMA_a * analogRead(mixturePin)) + ((1 - EMA_a) * mixtureValue);
-
   bool changed = false;
 
   if (valueEng1 != oldValueEng1) {
     oldValueEng1 = valueEng1;
-    engine1 = getPercentage(valueEng1, maxVal);
+    if(!reversed){
+    engine1 = getPercentage(valueEng1, minVal,maxVal);
+    } else{
+         engine1 = 100 - getPercentage(valueEng1, minVal,maxVal);
+    }
     engines[0] = engine1;
     changed = true;
   }
   if (valueEng2 != oldValueEng2) {
     oldValueEng2 = valueEng2;
-    engine2 = getPercentage(valueEng2, maxVal);
+    if(!reversed){
+    engine2 = getPercentage(valueEng2,minVal, maxVal);
+    } else{
+        engine2 = 100 - getPercentage(valueEng2, minVal,maxVal);
+    }
     engines[1] = engine2;
     changed = true;
   }
   if (valueEng3 != oldValueEng3) {
     oldValueEng3 = valueEng3;
-    engine3 = getPercentage(valueEng3, maxVal);
+    if(!reversed){
+    engine3 = getPercentage(valueEng3,minVal,maxVal);
+    } else {
+        engine3 = 100 - getPercentage(valueEng3, minVal,maxVal);
+    }
     engines[2] = engine3;
     changed = true;
   }
   if (valueEng4 != oldValueEng4) {
     oldValueEng4 = valueEng4;
-    engine4 = getPercentage(valueEng4, maxVal);
+    if(!reversed){
+    engine4 = getPercentage(valueEng4,minVal, maxVal);
+    } else {
+        engine4 = 100 - getPercentage(valueEng4, minVal,maxVal);
+    }
     engines[3] = engine4;
     changed = true;
   }
-  if (mixtureValue != oldMixtureValue) {
-    oldMixtureValue = mixtureValue;
-    mixturePercentage = getPercentage(mixtureValue, maxVal);
-    changed = true;
-  }
+
   if (changed) {
     sendCombinedThrottleValues();
   }
 }
 void BitsAndDroidsFlightConnector::superAdvancedInputHandling(
     byte eng1Percentage, byte eng2Percentage, byte eng3Percentage,
-    byte eng4Percentage, byte receivedMixturePercentage) {
+    byte eng4Percentage) {
   engines[0] = eng1Percentage;
   engines[1] = eng2Percentage;
   engines[2] = eng3Percentage;
   engines[3] = eng4Percentage;
-  mixturePercentage = receivedMixturePercentage;
   sendCombinedThrottleValues();
 }
 
