@@ -1,32 +1,51 @@
 #include "Arduino.h"
+#include "SoftwareSerial.h"
 #include "BitsAndDroidsFlightConnector.h"
-
 
 
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
   bool isLeonardoMicro) {
+  this->serial = &Serial;
   if (isLeonardoMicro) {
     Serial.begin(115200);
     Serial.setTimeout(50);
   }
 }
 
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
+  bool isLeonardoMicro, HardwareSerial* serial) {
+  this->serial = serial;
+  if (isLeonardoMicro) {
+    serial->begin(115200);
+    serial->setTimeout(50);
+  }
+}
+
+
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
+  bool isLeonardoMicro, SoftwareSerial* serial) {
+  this->serial = serial;
+  if (isLeonardoMicro) {
+    serial->begin(115200);
+    serial->setTimeout(50);
+  }
+}
 
 void BitsAndDroidsFlightConnector::sendCombinedThrottleValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i %i %i", "199", engines[0],
                          engines[1], engines[2], engines[3]);
-  Serial.println(valuesBuffer);
+  this->serial->println(valuesBuffer);
 }
 void BitsAndDroidsFlightConnector::sendCombinedPropValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i", "198", props[0], props[1]);
-  Serial.println(valuesBuffer);
+  this->serial->println(valuesBuffer);
 }
 void BitsAndDroidsFlightConnector::sendCombinedMixtureValues() {
 
          packagedData = sprintf(valuesBuffer, "%s %i %i", "115", mixturePercentage[0], mixturePercentage[1]);
 
 
-  Serial.println(valuesBuffer);
+  this->serial->println(valuesBuffer);
 }
 
 byte BitsAndDroidsFlightConnector::getPercentage(int value, int minVal, float maxVal) {
@@ -44,8 +63,8 @@ bool convBool(String input) {
 
 void BitsAndDroidsFlightConnector::dataHandling() {
 
-  if (Serial.available() > 0) {
-    receivedValue = Serial.readStringUntil('\n');
+  if (this->serial->available() > 0) {
+    receivedValue = this->serial->readStringUntil('\n');
     switchHandling();
   }
 
