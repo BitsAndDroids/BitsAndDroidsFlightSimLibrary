@@ -1,5 +1,4 @@
 #include "Arduino.h"
-#include "SoftwareSerial.h"
 #include "BitsAndDroidsFlightConnector.h"
 
 
@@ -21,7 +20,7 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
   }
 }
 
-
+#ifndef ARDUINO_SAM_DUE
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
   bool isLeonardoMicro, SoftwareSerial* serial) {
   this->serial = serial;
@@ -30,6 +29,17 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
     serial->setTimeout(50);
   }
 }
+#else
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
+  bool isLeonardoMicro, Serial_* serial) {
+  this->serial = serial;
+  if (isLeonardoMicro) {
+    serial->begin(115200);
+    serial->setTimeout(50);
+  }
+}
+
+#endif
 
 void BitsAndDroidsFlightConnector::sendCombinedThrottleValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i %i %i", "199", engines[0],

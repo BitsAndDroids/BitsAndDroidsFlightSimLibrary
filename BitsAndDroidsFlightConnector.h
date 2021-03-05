@@ -1,7 +1,9 @@
 #ifndef BitsAndDroidsFlightConnector_h
 #define BitsAndDroidsFlightConnector_h
 
+#ifndef ARDUINO_SAM_DUE
 #include "SoftwareSerial.h"
+#endif
 
 // library interface description
 class BitsAndDroidsFlightConnector {
@@ -9,7 +11,11 @@ class BitsAndDroidsFlightConnector {
  public:
   BitsAndDroidsFlightConnector(bool isLeonardoMicro);
   BitsAndDroidsFlightConnector(bool isLeonardoMicro, HardwareSerial* serial);
+  #ifndef ARDUINO_SAM_DUE
   BitsAndDroidsFlightConnector(bool isLeonardoMicro, SoftwareSerial* serial);
+  #else
+  BitsAndDroidsFlightConnector(bool isLeonardoMicro, Serial_* serial);
+  #endif
   
   void switchHandling();
   void dataHandling();
