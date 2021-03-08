@@ -1,12 +1,22 @@
-
 #ifndef BitsAndDroidsFlightConnector_h
 #define BitsAndDroidsFlightConnector_h
+
+#ifndef ARDUINO_SAM_DUE
+#include "SoftwareSerial.h"
+#endif
 
 // library interface description
 class BitsAndDroidsFlightConnector {
   // user-accessible "public" interface
  public:
   BitsAndDroidsFlightConnector(bool isLeonardoMicro);
+  BitsAndDroidsFlightConnector(bool isLeonardoMicro, HardwareSerial* serial);
+  #ifndef ARDUINO_SAM_DUE
+  BitsAndDroidsFlightConnector(bool isLeonardoMicro, SoftwareSerial* serial);
+  #else
+  BitsAndDroidsFlightConnector(bool isLeonardoMicro, Serial_* serial);
+  #endif
+  
   void switchHandling();
   void dataHandling();
   void simpleInputHandling(int throttlePin,int minVal, float maxVal, bool reversed);
@@ -705,6 +715,7 @@ class BitsAndDroidsFlightConnector {
   // These values can be ommited and printed to serial directly
   // They are mainly implemented to improve readability of your code
 
+  Stream* serial;
 
   // Avionics
   int valSendAvionicsMaster1On = 401;
