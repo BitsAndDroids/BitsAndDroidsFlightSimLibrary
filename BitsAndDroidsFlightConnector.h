@@ -16,7 +16,7 @@ class BitsAndDroidsFlightConnector {
   #else
   BitsAndDroidsFlightConnector(bool isLeonardoMicro, Serial_* serial);
   #endif
-  
+
   void switchHandling();
   void dataHandling();
   void simpleInputHandling(int throttlePin,int minVal, float maxVal, bool reversed);
@@ -26,6 +26,8 @@ class BitsAndDroidsFlightConnector {
   void sendCombinedMixtureValues();
   void propsInputHandling(int propPin1, int propPin2, int minVal, float maxVal, bool reversed);
   void mixtureInputHandling(int mixturePin1, int mixturePin2, int minVal,float maxVal, bool reversed);
+  void sendSetElevatorTrim(int value);
+  void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal);
 
@@ -80,6 +82,9 @@ class BitsAndDroidsFlightConnector {
   String getStandbyNav2();
   String getNavRadialError1();
   String getNavVorLationalt1();
+
+  int getNavObs1(){return navObs1;};
+  int getNavObs2(){return navObs2;};
 
   // Warnings
   bool getStallWarningOn();
@@ -1010,6 +1015,9 @@ class BitsAndDroidsFlightConnector {
   int propValue2;
   int oldValue;
 
+  int navObs1;
+  int navObs2;
+
   int oldPropValue1;
   int oldPropValue2;
 
@@ -1028,9 +1036,13 @@ class BitsAndDroidsFlightConnector {
   int oldMixtureValue1;
   int oldMixtureValue2;
 
+  int oldTrim;
+  int currentTrim;
+
   int packagedData;
   void sendCombinedThrottleValues();
   void sendCombinedPropValues();
+
 
   // Coms
   String activeCom1 = "";

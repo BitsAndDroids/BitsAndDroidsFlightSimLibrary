@@ -57,6 +57,20 @@ void BitsAndDroidsFlightConnector::sendCombinedMixtureValues() {
 
   this->serial->println(valuesBuffer);
 }
+void BitsAndDroidsFlightConnector::sendSetElevatorTrimPot(byte potPin,int minVal, int maxVal){
+    currentTrim = (EMA_a * analogRead(potPin)) + ((1 - EMA_a) * currentTrim);
+    if(currentTrim != oldTrim){
+        int trimFormatted = map(currentTrim, minVal, maxVal, -16383, 16383);
+        packagedData = sprintf(valuesBuffer, "%s %i","900", trimFormatted);
+        oldTrim = currentTrim;
+        this->serial->println(valuesBuffer);
+    }
+
+}
+void BitsAndDroidsFlightConnector::sendSetElevatorTrim(int value){
+        packagedData = sprintf(valuesBuffer, "%s i%","900", value);
+        this->serial->println(valuesBuffer);
+}
 
 byte BitsAndDroidsFlightConnector::getPercentage(int value, int minVal, float maxVal) {
    byte percentage = map(value, minVal,maxVal, 0,100);
@@ -503,6 +517,15 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         planeName = cutValue;
         break;
       }
+
+    case 606:{
+        navObs1 = cutValue.toInt();
+        break;
+    }
+    case 607:{
+        navObs2 = cutValue.toInt();
+        break;
+    }
 
       default:
         break;
