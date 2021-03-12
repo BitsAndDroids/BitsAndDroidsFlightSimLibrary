@@ -93,6 +93,7 @@ void BitsAndDroidsFlightConnector::dataHandling() {
   }
 
 }
+
 void BitsAndDroidsFlightConnector::switchHandling(){
 
     prefix = receivedValue.substring(0, 3);
@@ -383,7 +384,7 @@ void BitsAndDroidsFlightConnector::switchHandling(){
       }
 
       case 337: {
-        kohlmanAltimeter = inhg(cutValue);
+        kohlmanAltimeter = cutValue.toInt();
         break;
       }
       case 344: {
@@ -677,24 +678,7 @@ String BitsAndDroidsFlightConnector::convertToNavFreq(String unprocFreq) {
   String stringB = unprocFreq.substring(3, 5);
   return stringA + "." + stringB;
 }
-String BitsAndDroidsFlightConnector::inhg(String unprocInhg) {
-  int valOfAltm = unprocInhg.toInt();
 
-  String correction = unprocInhg.substring(3);
-
-  int valOfCorrection = correction.toInt();
-
-  if (valOfCorrection > 5) {
-    // if its bigger add 10
-    valOfAltm += 10;
-  }
-  // remove the last digit that
-  valOfAltm = (valOfAltm - valOfCorrection) / 10;
-  String valString = String(valOfAltm);
-  String stringA = valString.substring(0, 2);
-  String stringB = valString.substring(2);
-  return stringA + "." + stringB;
-}
 int BitsAndDroidsFlightConnector::getLastPrefix() { return lastPrefix; }
 // Set jitter algorithm EMA_a
 void BitsAndDroidsFlightConnector::setEMA_a(float a) { EMA_a = a; }
@@ -760,7 +744,7 @@ bool BitsAndDroidsFlightConnector::getAPRPMHoldOn() { return APRPMHoldOn; }
 String BitsAndDroidsFlightConnector::getApHeadingLock() {
   return apHeadingLock;
 }
-String BitsAndDroidsFlightConnector::getKohlmanAltimeter() {
+int BitsAndDroidsFlightConnector::getKohlmanAltimeter() {
   return kohlmanAltimeter;
 }
 String BitsAndDroidsFlightConnector::getBarPressure() { return barPressure; }

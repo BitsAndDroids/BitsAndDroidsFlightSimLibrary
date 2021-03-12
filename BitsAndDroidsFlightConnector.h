@@ -46,7 +46,7 @@ class BitsAndDroidsFlightConnector {
 
   // Avionics
   String getApHeadingLock();
-  String getKohlmanAltimeter();
+  int getKohlmanAltimeter();
   String getBarPressure();
   String getFuelTotalPercentage();
 
@@ -940,10 +940,10 @@ class BitsAndDroidsFlightConnector {
   String inputText;
   String convertToFreq(String unprocVal);
   String convertToNavFreq(String unprocVal);
-  String inhg(String unprocInhg);
+
 
   String apVerticalSpeed = "";
-  String kohlmanAltimeter = "";
+  int kohlmanAltimeter;
   String barPressure = "";
   String apAltLock = "";
   String apHeadingLock = "";
