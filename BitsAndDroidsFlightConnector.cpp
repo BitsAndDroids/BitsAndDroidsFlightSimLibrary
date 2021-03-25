@@ -51,21 +51,58 @@ void BitsAndDroidsFlightConnector::sendCombinedPropValues() {
   this->serial->println(valuesBuffer);
 }
 void BitsAndDroidsFlightConnector::sendCombinedMixtureValues() {
-
          packagedData = sprintf(valuesBuffer, "%s %i %i", "115", mixturePercentage[0], mixturePercentage[1]);
-
-
   this->serial->println(valuesBuffer);
 }
+
 void BitsAndDroidsFlightConnector::sendSetElevatorTrimPot(byte potPin,int minVal, int maxVal){
     currentTrim = (EMA_a * analogRead(potPin)) + ((1 - EMA_a) * currentTrim);
     if(currentTrim != oldTrim){
-        int trimFormatted = map(currentTrim, minVal, maxVal, -16383, 16383);
+        int trimFormatted = calculateAxis(currentTrim,0 , 1023);
         packagedData = sprintf(valuesBuffer, "%s %i","900", trimFormatted);
         oldTrim = currentTrim;
         this->serial->println(valuesBuffer);
     }
+}
+void BitsAndDroidsFlightConnector::sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal){
+    currentLeftBrake = (EMA_a * analogRead(leftPin)) + ((1 - EMA_a) * currentLeftBrake);
+    currentRightBrake = (EMA_a * analogRead(rightPin)) + ((1 - EMA_a) * currentRightBrake);
 
+    bool changed = false;
+    if(oldLeftBrake != currentLeftBrake){
+
+        leftBrakeFormated = calculateAxis(currentLeftBrake, minVal, maxVal);
+        oldLeftBrake = currentLeftBrake;
+        changed = true;
+    }
+    if(oldRightBrake != currentRightBrake){
+
+         rightBrakeFormated = calculateAxis(currentRightBrake, minVal, maxVal);
+          oldRightBrake = currentRightBrake;
+         changed = true;
+    }
+
+
+      if(changed){
+      packagedData = sprintf(valuesBuffer, "%s %i %i","902", leftBrakeFormated, rightBrakeFormated);
+      this->serial->println(valuesBuffer);
+      delay(50);
+      }
+    }
+
+void BitsAndDroidsFlightConnector::sendSetRudderPot(byte potPin,int minVal, int maxVal){
+    currentRudder = (EMA_a * analogRead(potPin)) + ((1 - EMA_a) * currentRudder);
+    if(currentRudder != oldRudderAxis){
+        int rudderFormated = calculateAxis(currentRudder,minVal ,maxVal);
+        packagedData = sprintf(valuesBuffer, "%s %i","901", rudderFormated);
+        oldRudderAxis = currentRudder;
+        this->serial->println(valuesBuffer);
+        delay(50);
+    }
+
+}
+int BitsAndDroidsFlightConnector::calculateAxis(int value, int minVal, int maxVal){
+    return map(value, minVal, maxVal, -16383, 16383);
 }
 void BitsAndDroidsFlightConnector::sendSetElevatorTrim(int value){
         packagedData = sprintf(valuesBuffer, "%s i%","900", value);
@@ -155,7 +192,7 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 275: {
-        fuelTotalPercentage = cutValue;
+        fuelTotalPercentage = cutValue.toInt();
         break;
       }
     case 312:{
@@ -178,52 +215,52 @@ void BitsAndDroidsFlightConnector::switchHandling(){
       }
         //GPS
     case 454:{
-     gpsCourseToSteer = cutValue;
+     gpsCourseToSteer = cutValue.toInt();
     }
 
       // Flaps
       case 510: {
-        flapsHandlePct = cutValue;
+        flapsHandlePct = cutValue.toInt();
         break;
       }
       case 511: {
-        flapsHandleIndex = cutValue;
+        flapsHandleIndex = cutValue.toInt();
         break;
       }
       case 512: {
-        flapsNumHandlePos = cutValue;
+        flapsNumHandlePos = cutValue.toInt();
         break;
       }
       case 513: {
-        trailingEdgeFlapsLeftPercent = cutValue;
+        trailingEdgeFlapsLeftPercent = cutValue.toInt();
         break;
       }
       case 514: {
-        trailingEdgeFlapsRightPercent = cutValue;
+        trailingEdgeFlapsRightPercent = cutValue.toInt();
         break;
       }
       case 515: {
-        trailingEdgeFlapsLeftAngle = cutValue;
+        trailingEdgeFlapsLeftAngle = cutValue.toInt();
         break;
       }
       case 516: {
-        trailingEdgeFlapsRightAngle = cutValue;
+        trailingEdgeFlapsRightAngle = cutValue.toInt();
         break;
       }
       case 517: {
-        leadingEdgeFlapsLeftPct = cutValue;
+        leadingEdgeFlapsLeftPct = cutValue.toInt();
         break;
       }
       case 518: {
-        leadingEdgeFlapsRightPct = cutValue;
+        leadingEdgeFlapsRightPct = cutValue.toInt();
         break;
       }
       case 519: {
-        leadingEdgeFlapsLeftAngle = cutValue;
+        leadingEdgeFlapsLeftAngle = cutValue.toInt();
         break;
       }
       case 520: {
-        leadingEdgeFlapsRightAngle = cutValue;
+        leadingEdgeFlapsRightAngle = cutValue.toInt();
         break;
       }
 
@@ -233,7 +270,7 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 527: {
-        gearHydraulicPressure = cutValue;
+        gearHydraulicPressure = cutValue.toInt();
         break;
       }
       case 528: {
@@ -241,27 +278,27 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 529: {
-        gearCenterPositionPct = cutValue;
+        gearCenterPositionPct = cutValue.toInt();
         break;
       }
       case 530: {
-        gearLeftPositionPct = cutValue;
+        gearLeftPositionPct = cutValue.toInt();
         break;
       }
       case 531: {
-        gearRightPositionPct = cutValue;
+        gearRightPositionPct = cutValue.toInt();
         break;
       }
       case 532: {
-        gearTailPositionPct = cutValue;
+        gearTailPositionPct = cutValue.toInt();
         break;
       }
       case 533: {
-        gearAuxPosition = cutValue;
+        gearAuxPosition = cutValue.toInt();
         break;
       }
       case 536: {
-        gearTotalPct = cutValue;
+        gearTotalPct = cutValue.toInt();
         break;
       }
 
@@ -345,41 +382,41 @@ void BitsAndDroidsFlightConnector::switchHandling(){
 
       // Rudder trim
       case 498: {
-        elevatorTrimPos = cutValue;
+        elevatorTrimPos = cutValue.toInt();
         break;
       }
       case 500: {
-        elevatorTrimPct = cutValue;
+        elevatorTrimPct = cutValue.toInt();
         break;
       }
       case 562: {
-        aileronTrimDegr = cutValue;
+        aileronTrimDegr = cutValue.toInt();
         break;
       }
       case 563: {
-        aileronTrimPct = cutValue;
+        aileronTrimPct = cutValue.toInt();
         break;
       }
       case 566: {
-        rudderTrimDegr = cutValue;
+        rudderTrimDegr = cutValue.toInt();
         break;
       }
       case 567: {
-        rudderTrimPct = cutValue;
+        rudderTrimPct = cutValue.toInt();
         break;
       }
 
       case 330: {
-        trueVerticalSpeed = cutValue;
+        trueVerticalSpeed = cutValue.toInt();
         break;
       }
 
       case 326: {
-        indicatedAirspeed = cutValue;
+        indicatedAirspeed = cutValue.toInt();
         break;
       }
       case 335: {
-        indicatedAltitude = cutValue;
+        indicatedAltitude = cutValue.toInt();
         break;
       }
 
@@ -388,27 +425,27 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 344: {
-        indicatedHeading = cutValue;
+        indicatedHeading = cutValue.toInt();
         break;
       }
       case 430: {
-        indicatedGPSGroundspeed = cutValue;
+        indicatedGPSGroundspeed = cutValue.toInt();
         break;
       }
       case 582: {
-        apHeadingLock = cutValue;
+        apHeadingLock = cutValue.toInt();
         break;
       }
       case 584: {
-        apAltLock = cutValue;
+        apAltLock = cutValue.toInt();
         break;
       }
       case 590: {
-        apVerticalSpeed = cutValue;
+        apVerticalSpeed = cutValue.toInt();
         break;
       }
       case 632: {
-        barPressure = cutValue;
+        barPressure = cutValue.toInt();
         break;
       }
       case 900: {
@@ -444,11 +481,11 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 914: {
-        navRadialError1 = cutValue;
+        navRadialError1 = cutValue.toInt();
         break;
       }
       case 915: {
-        navVorLationalt1 = cutValue;
+        navVorLationalt1 = cutValue.toInt();
         break;
       }
         // DME
@@ -685,240 +722,7 @@ void BitsAndDroidsFlightConnector::setEMA_a(float a) { EMA_a = a; }
 // RECEIVING VALUES
 // GPS
 
-String BitsAndDroidsFlightConnector::getGpsCourseToSteer(){return gpsCourseToSteer;}
-// Ap
-String BitsAndDroidsFlightConnector::getApVerticalSpeed() {
-  return apVerticalSpeed;
-}
-String BitsAndDroidsFlightConnector::getApAltLock() { return apAltLock; }
 
-bool BitsAndDroidsFlightConnector::getAPAvailable() { return APAvailable; }
-bool BitsAndDroidsFlightConnector::getAPMasterOn() { return APMasterOn; }
-bool BitsAndDroidsFlightConnector::getAPWingLevelerOn() {
-  return APWingLevelerOn;
-}
-bool BitsAndDroidsFlightConnector::getAPNav1LockOn() { return APNav1LockOn; }
-bool BitsAndDroidsFlightConnector::getAPHeadingLockOn() {
-  return APHeadingLockOn;
-}
-bool BitsAndDroidsFlightConnector::getAPAltitudeLockOn() {
-  return APAltitudeLockOn;
-}
-bool BitsAndDroidsFlightConnector::getAPAttitudeLockOn() {
-  return APAttitudeLockOn;
-}
-bool BitsAndDroidsFlightConnector::getAPGlideslopeHoldOn() {
-  return APGlideslopeHoldOn;
-}
-bool BitsAndDroidsFlightConnector::getAPApproachHoldOn() {
-  return APApproachHoldOn;
-}
-bool BitsAndDroidsFlightConnector::getAPBackcourseHoldOn() {
-  return APBackcourseHoldOn;
-}
-bool BitsAndDroidsFlightConnector::getAPFlightDirectorOn() {
-  return APFlightDirectorOn;
-}
-bool BitsAndDroidsFlightConnector::getAPAirspeedHoldOn() {
-  return APAirspeedHoldOn;
-}
-bool BitsAndDroidsFlightConnector::getAPMachHoldOn() { return APMachHoldOn; }
-bool BitsAndDroidsFlightConnector::getAPYawDampenerOn() {
-  return APYawDampenerOn;
-}
-bool BitsAndDroidsFlightConnector::getAPAutothrottleArm() {
-  return APAutothrottleArm;
-}
-bool BitsAndDroidsFlightConnector::getAPTakeoffPowerOn() {
-  return APTakeoffPowerOn;
-}
-bool BitsAndDroidsFlightConnector::getAPAutothrottleOn() {
-  return APAutothrottleOn;
-}
-bool BitsAndDroidsFlightConnector::getAPVerticalHoldOn() {
-  return APVerticalHoldOn;
-}
-bool BitsAndDroidsFlightConnector::getAPRPMHoldOn() { return APRPMHoldOn; }
-
-// Avionics
-String BitsAndDroidsFlightConnector::getApHeadingLock() {
-  return apHeadingLock;
-}
-int BitsAndDroidsFlightConnector::getKohlmanAltimeter() {
-  return kohlmanAltimeter;
-}
-String BitsAndDroidsFlightConnector::getBarPressure() { return barPressure; }
-String BitsAndDroidsFlightConnector::getIndicatedAirspeed() {
-  return indicatedAirspeed;
-}
-String BitsAndDroidsFlightConnector::getIndicatedAltitude() {
-  return indicatedAltitude;
-}
-String BitsAndDroidsFlightConnector::getIndicatedHeading() {
-  return indicatedHeading;
-}
-String BitsAndDroidsFlightConnector::getIndicatedGPSGroundspeed() {
-  return indicatedGPSGroundspeed;
-}
-String BitsAndDroidsFlightConnector::getTrueVerticalSpeed() {
-  return trueVerticalSpeed;
-}
-String BitsAndDroidsFlightConnector::getFuelTotalPercentage() {
-  return fuelTotalPercentage;
-}
-
-// lights
-bool BitsAndDroidsFlightConnector::getLightTaxiOn() { return lightTaxiOn; }
-bool BitsAndDroidsFlightConnector::getLightStrobeOn() { return lightStrobeOn; }
-bool BitsAndDroidsFlightConnector::getLightPanelOn() { return lightPanelOn; }
-bool BitsAndDroidsFlightConnector::getLightRecognitionOn() {
-  return lightRecognitionOn;
-}
-bool BitsAndDroidsFlightConnector::getLightWingOn() { return lightWingOn; }
-bool BitsAndDroidsFlightConnector::getLightLogoOn() { return lightLogoOn; }
-bool BitsAndDroidsFlightConnector::getLightCabinOn() { return lightCabinOn; }
-bool BitsAndDroidsFlightConnector::getLightHeadOn() { return lightHeadOn; }
-bool BitsAndDroidsFlightConnector::getLightBrakeOn() { return lightBrakeOn; }
-bool BitsAndDroidsFlightConnector::getLightNavOn() { return lightNavOn; }
-bool BitsAndDroidsFlightConnector::getLightBeaconOn() { return lightBeaconOn; }
-bool BitsAndDroidsFlightConnector::getLightLandingOn() {
-  return lightLandingOn;
-}
-
-// Coms
-String BitsAndDroidsFlightConnector::getActiveCom1() { return activeCom1; }
-String BitsAndDroidsFlightConnector::getActiveCom2() { return activeCom2; }
-String BitsAndDroidsFlightConnector::getStandbyCom1() { return standByCom1; }
-String BitsAndDroidsFlightConnector::getStandbyCom2() { return standByCom2; }
-String BitsAndDroidsFlightConnector::getActiveNav1() { return activeNav1; }
-String BitsAndDroidsFlightConnector::getActiveNav2() { return activeNav2; }
-String BitsAndDroidsFlightConnector::getStandbyNav1() { return standbyNav1; }
-String BitsAndDroidsFlightConnector::getStandbyNav2() { return standbyNav2; }
-String BitsAndDroidsFlightConnector::getNavRadialError1() {
-  return navRadialError1;
-}
-String BitsAndDroidsFlightConnector::getNavVorLationalt1() {
-  return navVorLationalt1;
-}
-
-// DME
-String BitsAndDroidsFlightConnector::getNavDme1() { return navDme1; }
-String BitsAndDroidsFlightConnector::getNavDme2() { return navDme2; }
-String BitsAndDroidsFlightConnector::getNavDmeSpeed1() { return navDmeSpeed1; }
-String BitsAndDroidsFlightConnector::getNavDmeSpeed2() { return navDmeSpeed2; }
-
-// ADF
-String BitsAndDroidsFlightConnector::getAdfActiveFreq1() {
-  return adfActiveFreq1;
-}
-String BitsAndDroidsFlightConnector::getAdfStandbyFreq1() {
-  return adfStandbyFreq1;
-}
-String BitsAndDroidsFlightConnector::getAdfRadial1() { return adfRadial1; }
-String BitsAndDroidsFlightConnector::getAdfSignal1() { return adfSignal1; }
-String BitsAndDroidsFlightConnector::getAdfActiveFreq2() {
-  return adfActiveFreq2;
-}
-String BitsAndDroidsFlightConnector::getAdfStandbyFreq2() {
-  return adfStandbyFreq2;
-}
-String BitsAndDroidsFlightConnector::getAdfRadial2() { return adfRadial2; }
-String BitsAndDroidsFlightConnector::getAdfSignal2() { return adfSignal2; }
-
-// Transponder
-String BitsAndDroidsFlightConnector::getTransponderCode1() {
-  return transponderCode1;
-}
-String BitsAndDroidsFlightConnector::getTransponderCode2() {
-  return transponderCode2;
-}
-
-// Warnings
-bool BitsAndDroidsFlightConnector::getStallWarningOn() { return stallWarning; }
-bool BitsAndDroidsFlightConnector::getOverspeedWarningOn() {
-  return overspeedWarning;
-}
-
-// Flaps
-String BitsAndDroidsFlightConnector::getFlapsHandlePct() {
-  return flapsHandlePct;
-}
-String BitsAndDroidsFlightConnector::getFlapsHandleIndex() {
-  return flapsHandleIndex;
-}
-String BitsAndDroidsFlightConnector::getFlapsNumHandlePos() {
-  return flapsNumHandlePos;
-}
-String BitsAndDroidsFlightConnector::getTrailingEdgeFlapsLeftPercent() {
-  return trailingEdgeFlapsLeftPercent;
-}
-String BitsAndDroidsFlightConnector::getTrailingEdgeFlapsRightPercent() {
-  return trailingEdgeFlapsRightPercent;
-}
-String BitsAndDroidsFlightConnector::getTrailingEdgeFlapsLeftAngle() {
-  return trailingEdgeFlapsLeftAngle;
-}
-String BitsAndDroidsFlightConnector::getTrailingEdgeFlapsRightAngle() {
-  return trailingEdgeFlapsRightAngle;
-}
-String BitsAndDroidsFlightConnector::getLeadingEdgeFlapsLeftPct() {
-  return leadingEdgeFlapsLeftPct;
-}
-String BitsAndDroidsFlightConnector::getLeadingEdgeFlapsRightPct() {
-  return leadingEdgeFlapsRightPct;
-}
-String BitsAndDroidsFlightConnector::getLeadingEdgeFlapsLeftAngle() {
-  return leadingEdgeFlapsLeftAngle;
-}
-String BitsAndDroidsFlightConnector::getLeadingEdgeFlapsRightAngle() {
-  return leadingEdgeFlapsRightAngle;
-}
-
-// Gears
-bool BitsAndDroidsFlightConnector::getGearHandlePos() { return gearHandlePos; }
-String BitsAndDroidsFlightConnector::getGearHydraulicPressure() {
-  return gearHydraulicPressure;
-}
-bool BitsAndDroidsFlightConnector::getTailWheelLock() { return tailWheelLock; }
-String BitsAndDroidsFlightConnector::getGearCenterPositionPct() {
-  return gearCenterPositionPct;
-}
-String BitsAndDroidsFlightConnector::getGearLeftPositionPct() {
-  return gearLeftPositionPct;
-}
-String BitsAndDroidsFlightConnector::getGearRightPositionPct() {
-  return gearRightPositionPct;
-}
-String BitsAndDroidsFlightConnector::getGearTailPositionPct() {
-  return gearTailPositionPct;
-}
-String BitsAndDroidsFlightConnector::getGearAuxPosition() {
-  return gearAuxPosition;
-}
-String BitsAndDroidsFlightConnector::getGearTotalPct() { return gearTotalPct; }
-
-// Rudder/Trim
-String BitsAndDroidsFlightConnector::getAileronTrimPct() {
-  return aileronTrimPct;
-}
-String BitsAndDroidsFlightConnector::getAileronTrimDegr() {
-  return aileronTrimDegr;
-}
-String BitsAndDroidsFlightConnector::getRudderTrimDegr() {
-  return rudderTrimDegr;
-}
-String BitsAndDroidsFlightConnector::getRudderTrimPct() {
-  return rudderTrimPct;
-}
-String BitsAndDroidsFlightConnector::getElevatorTrimPos() {
-  return elevatorTrimPos;
-}
-String BitsAndDroidsFlightConnector::getElevatorTrimPct() {
-  return elevatorTrimPct;
-}
-
-// Plane data
-String BitsAndDroidsFlightConnector::getPlaneName() { return planeName; }
 
 //----------------------
 // TRANSMIT FUNCTIONS

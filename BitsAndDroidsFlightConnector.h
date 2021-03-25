@@ -27,6 +27,8 @@ class BitsAndDroidsFlightConnector {
   void propsInputHandling(int propPin1, int propPin2, int minVal, float maxVal, bool reversed);
   void mixtureInputHandling(int mixturePin1, int mixturePin2, int minVal,float maxVal, bool reversed);
   void sendSetElevatorTrim(int value);
+  void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
+  void sendSetRudderPot(byte rudderPin,int minVal, int maxVal);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal);
@@ -38,134 +40,134 @@ class BitsAndDroidsFlightConnector {
   bool onGround = true;
   bool getOnGround(){return onGround;};
   // Ap
-  String getApVerticalSpeed();
-  String getApAltLock();
+  int getApVerticalSpeed(){return apVerticalSpeed;};
+  int getApAltLock(){return apAltLock;};
 
   // GPS
-  String getGpsCourseToSteer();
+  int getGpsCourseToSteer(){return gpsCourseToSteer;};
 
   // Avionics
-  String getApHeadingLock();
-  int getKohlmanAltimeter();
-  String getBarPressure();
-  String getFuelTotalPercentage();
+  int getApHeadingLock(){return apHeadingLock;};
+  int getKohlmanAltimeter(){return kohlmanAltimeter;};
+  int getBarPressure(){return barPressure;};
+  byte getFuelTotalPercentage(){return fuelTotalPercentage;};
 
-  String getIndicatedAirspeed();
-  String getIndicatedAltitude();
-  String getIndicatedHeading();
-  String getIndicatedGPSGroundspeed();
-  String getTrueVerticalSpeed();
+  int getIndicatedAirspeed(){return indicatedAirspeed;};
+  int getIndicatedAltitude(){return indicatedAltitude;};
+  int getIndicatedHeading(){return indicatedHeading;};
+  int getIndicatedGPSGroundspeed(){return indicatedGPSGroundspeed;};
+  int getTrueVerticalSpeed(){return trueVerticalSpeed;};
   int getLastPrefix();
 
   // Lights
-  bool getLightTaxiOn();
-  bool getLightStrobeOn();
-  bool getLightPanelOn();
-  bool getLightRecognitionOn();
-  bool getLightWingOn();
-  bool getLightLogoOn();
-  bool getLightCabinOn();
-  bool getLightHeadOn();
-  bool getLightBrakeOn();
-  bool getLightNavOn();
-  bool getLightBeaconOn();
-  bool getLightLandingOn();
+  bool getLightTaxiOn(){return lightTaxiOn;};
+  bool getLightStrobeOn(){return lightStrobeOn;};
+  bool getLightPanelOn(){return lightPanelOn;};
+  bool getLightRecognitionOn(){return lightRecognitionOn;};
+  bool getLightWingOn(){return lightWingOn;};
+  bool getLightLogoOn(){return lightLogoOn;};
+  bool getLightCabinOn(){return lightCabinOn;};
+  bool getLightHeadOn(){return lightHeadOn;};
+  bool getLightBrakeOn(){return lightBrakeOn;};
+  bool getLightNavOn(){return lightNavOn;};
+  bool getLightBeaconOn(){return lightBeaconOn;};
+  bool getLightLandingOn(){return lightLandingOn;};
 
   // Coms
-  String getActiveCom1();
-  String getActiveCom2();
-  String getStandbyCom1();
-  String getStandbyCom2();
-  String getActiveNav1();
-  String getActiveNav2();
-  String getStandbyNav1();
-  String getStandbyNav2();
-  String getNavRadialError1();
-  String getNavVorLationalt1();
+  String getActiveCom1(){return activeCom1;};
+  String getActiveCom2(){return activeCom2;};
+  String getStandbyCom1(){return standByCom1;};
+  String getStandbyCom2(){return standByCom2;};
+  String getActiveNav1(){return activeNav1;};
+  String getActiveNav2(){return activeNav2;};
+  String getStandbyNav1(){return standbyNav1;};
+  String getStandbyNav2(){return standbyNav2;};
+  String getNavRadialError1(){return navRadialError1;};
+  String getNavVorLationalt1(){return navVorLationalt1;};
 
   int getNavObs1(){return navObs1;};
   int getNavObs2(){return navObs2;};
 
   // Warnings
-  bool getStallWarningOn();
-  bool getOverspeedWarningOn();
+  bool getStallWarningOn(){return stallWarning;};
+  bool getOverspeedWarningOn(){return overspeedWarning;};
 
 
   // flaps
-  String getFlapsHandlePct();
-  String getFlapsHandleIndex();
-  String getFlapsNumHandlePos();
-  String getTrailingEdgeFlapsLeftPercent();
-  String getTrailingEdgeFlapsRightPercent();
-  String getTrailingEdgeFlapsLeftAngle();
-  String getTrailingEdgeFlapsRightAngle();
-  String getLeadingEdgeFlapsLeftPct();
-  String getLeadingEdgeFlapsRightPct();
-  String getLeadingEdgeFlapsLeftAngle();
-  String getLeadingEdgeFlapsRightAngle();
+  byte getFlapsHandlePct(){return flapsHandlePct;};
+  byte getFlapsHandleIndex(){return flapsHandleIndex;};
+  byte getFlapsNumHandlePos(){return flapsNumHandlePos;};
+  byte getTrailingEdgeFlapsLeftPercent(){return trailingEdgeFlapsLeftPercent;};
+  byte getTrailingEdgeFlapsRightPercent(){return trailingEdgeFlapsRightPercent;};
+  int getTrailingEdgeFlapsLeftAngle(){return trailingEdgeFlapsLeftAngle;};
+  int getTrailingEdgeFlapsRightAngle(){return trailingEdgeFlapsRightAngle;};
+  byte getLeadingEdgeFlapsLeftPct(){return leadingEdgeFlapsLeftPct;};
+  byte getLeadingEdgeFlapsRightPct(){return leadingEdgeFlapsRightPct;};
+  int getLeadingEdgeFlapsLeftAngle(){return leadingEdgeFlapsLeftAngle;};
+  int getLeadingEdgeFlapsRightAngle(){return leadingEdgeFlapsRightAngle;};
 
   // Gears
-  bool getGearHandlePos();
-  String getGearHydraulicPressure();
-  bool getTailWheelLock();
-  String getGearCenterPositionPct();
-  String getGearLeftPositionPct();
-  String getGearRightPositionPct();
-  String getGearTailPositionPct();
-  String getGearAuxPosition();
-  String getGearTotalPct();
+  bool getGearHandlePos(){return gearHandlePos;};
+  int getGearHydraulicPressure(){return gearHydraulicPressure;};
+  bool getTailWheelLock(){return tailWheelLock;};
+  byte getGearCenterPositionPct(){return gearCenterPositionPct;};
+  byte getGearLeftPositionPct(){return gearLeftPositionPct;};
+  byte getGearRightPositionPct(){return gearRightPositionPct;};
+  byte getGearTailPositionPct(){return gearTailPositionPct;};
+  byte getGearAuxPosition(){return gearAuxPosition;};
+  byte getGearTotalPct(){return gearTotalPct;};
 
   // Rudder/Trim
-  String getAileronTrimPct();
-  String getAileronTrimDegr();
-  String getRudderTrimDegr();
-  String getRudderTrimPct();
-  String getElevatorTrimPos();
-  String getElevatorTrimPct();
+  byte getAileronTrimPct(){return aileronTrimPct;};
+  int getAileronTrimDegr(){return aileronTrimDegr;};
+  int getRudderTrimDegr(){return rudderTrimDegr;};
+  byte getRudderTrimPct(){return rudderTrimPct;};
+  int getElevatorTrimPos(){return elevatorTrimPos;};
+  byte getElevatorTrimPct(){return elevatorTrimPct;};
 
   // DME
-  String getNavDme1();
-  String getNavDme2();
-  String getNavDmeSpeed1();
-  String getNavDmeSpeed2();
+  String getNavDme1(){return navDme1;};
+  String getNavDme2(){return navDme2;};
+  String getNavDmeSpeed1(){return navDmeSpeed1;};
+  String getNavDmeSpeed2(){return navDmeSpeed2;};
 
   // ADF
-  String getAdfActiveFreq1();
-  String getAdfStandbyFreq1();
-  String getAdfRadial1();
-  String getAdfSignal1();
-  String getAdfActiveFreq2();
-  String getAdfStandbyFreq2();
-  String getAdfRadial2();
-  String getAdfSignal2();
+  String getAdfActiveFreq1(){return adfActiveFreq1;};
+  String getAdfStandbyFreq1(){return adfStandbyFreq1;};
+  String getAdfRadial1(){return adfRadial1;};
+  String getAdfSignal1(){return adfSignal1;};
+  String getAdfActiveFreq2(){return adfActiveFreq2;};
+  String getAdfStandbyFreq2(){return adfStandbyFreq2;};
+  String getAdfRadial2(){return adfRadial2;};
+  String getAdfSignal2(){return adfSignal2;};
 
   // Transponder
-  String getTransponderCode1();
-  String getTransponderCode2();
+  String getTransponderCode1(){return transponderCode1;};
+  String getTransponderCode2(){return transponderCode2;};
 
   // AP
-  bool getAPAvailable();
-  bool getAPMasterOn();
-  bool getAPWingLevelerOn();
-  bool getAPNav1LockOn();
-  bool getAPHeadingLockOn();
-  bool getAPAltitudeLockOn();
-  bool getAPAttitudeLockOn();
-  bool getAPGlideslopeHoldOn();
-  bool getAPApproachHoldOn();
-  bool getAPBackcourseHoldOn();
-  bool getAPFlightDirectorOn();
-  bool getAPAirspeedHoldOn();
-  bool getAPMachHoldOn();
-  bool getAPYawDampenerOn();
-  bool getAPAutothrottleArm();
-  bool getAPTakeoffPowerOn();
-  bool getAPAutothrottleOn();
-  bool getAPVerticalHoldOn();
-  bool getAPRPMHoldOn();
+  bool getAPAvailable(){return APAvailable;};
+  bool getAPMasterOn(){return APMasterOn;};
+  bool getAPWingLevelerOn(){return APWingLevelerOn;};
+  bool getAPNav1LockOn(){return APNav1LockOn;};
+  bool getAPHeadingLockOn(){return APHeadingLockOn;};
+  bool getAPAltitudeLockOn(){return APAltitudeLockOn;};
+  bool getAPAttitudeLockOn(){return APAttitudeLockOn;};
+  bool getAPGlideslopeHoldOn(){return APGlideslopeHoldOn;};
+  bool getAPApproachHoldOn(){return APApproachHoldOn;};
+  bool getAPBackcourseHoldOn(){return APBackcourseHoldOn;};
+  bool getAPFlightDirectorOn(){return APFlightDirectorOn;};
+  bool getAPAirspeedHoldOn(){return APAirspeedHoldOn;};
+  bool getAPMachHoldOn(){return APMachHoldOn;};
+  bool getAPYawDampenerOn(){return APYawDampenerOn;};
+  bool getAPAutothrottleArm(){return APAutothrottleArm;};
+  bool getAPTakeoffPowerOn(){return APTakeoffPowerOn;};
+  bool getAPAutothrottleOn(){return APAutothrottleOn;};
+  bool getAPVerticalHoldOn(){return APVerticalHoldOn;};
+  bool getAPRPMHoldOn(){return APRPMHoldOn;};
 
   // Plane data
-  String getPlaneName();
+  String getPlaneName(){return planeName;};
 
   //--------------------------------------------
   // TRANSMIT DATA
@@ -942,17 +944,17 @@ class BitsAndDroidsFlightConnector {
   String convertToNavFreq(String unprocVal);
 
 
-  String apVerticalSpeed = "";
+  int apVerticalSpeed;
   int kohlmanAltimeter;
-  String barPressure = "";
-  String apAltLock = "";
-  String apHeadingLock = "";
+  int barPressure;
+  int apAltLock;
+  int apHeadingLock;
 
-  String indicatedAirspeed = "";
-  String indicatedAltitude = "";
-  String indicatedHeading = "";
-  String indicatedGPSGroundspeed = "";
-  String trueVerticalSpeed = "";
+  int indicatedAirspeed;
+  int indicatedAltitude;
+  int indicatedHeading;
+  int indicatedGPSGroundspeed;
+  int trueVerticalSpeed;
 
   // lights
   bool lightTaxiOn = false;
@@ -993,7 +995,7 @@ class BitsAndDroidsFlightConnector {
   bool stallWarning = false;
   bool overspeedWarning = false;
 
-  String fuelTotalPercentage = "";
+  int fuelTotalPercentage;
 
   char valuesBuffer[40];
 
@@ -1039,6 +1041,15 @@ class BitsAndDroidsFlightConnector {
   int oldTrim;
   int currentTrim;
 
+  int currentRudder;
+  int oldRudderAxis;
+
+  int currentLeftBrake;
+  int oldLeftBrake;
+
+  int currentRightBrake;
+  int oldRightBrake;
+
   int packagedData;
   void sendCombinedThrottleValues();
   void sendCombinedPropValues();
@@ -1057,7 +1068,7 @@ class BitsAndDroidsFlightConnector {
   String navVorLationalt1 = "";
 
   // GPS
-  String gpsCourseToSteer = "";
+  int gpsCourseToSteer;
 
   // DME
   String navDme1 = "";
@@ -1080,36 +1091,36 @@ class BitsAndDroidsFlightConnector {
   String transponderCode2 = "";
 
   // Flaps
-  String flapsHandlePct = "";
-  String flapsHandleIndex = "";
-  String flapsNumHandlePos = "";
-  String trailingEdgeFlapsLeftPercent = "";
-  String trailingEdgeFlapsRightPercent = "";
-  String trailingEdgeFlapsLeftAngle = "";
-  String trailingEdgeFlapsRightAngle = "";
-  String leadingEdgeFlapsLeftPct = "";
-  String leadingEdgeFlapsRightPct = "";
-  String leadingEdgeFlapsLeftAngle = "";
-  String leadingEdgeFlapsRightAngle = "";
+  byte flapsHandlePct;
+  byte flapsHandleIndex;
+  byte flapsNumHandlePos;
+  byte trailingEdgeFlapsLeftPercent;
+  byte trailingEdgeFlapsRightPercent;
+  int trailingEdgeFlapsLeftAngle;
+  int trailingEdgeFlapsRightAngle;
+  byte leadingEdgeFlapsLeftPct;
+  int leadingEdgeFlapsRightPct;
+  byte leadingEdgeFlapsLeftAngle;
+  byte leadingEdgeFlapsRightAngle;
 
   // Gears
   bool gearHandlePos = false;
-  String gearHydraulicPressure = "";
+  int gearHydraulicPressure;
   bool tailWheelLock = false;
-  String gearCenterPositionPct = "";
-  String gearLeftPositionPct = "";
-  String gearRightPositionPct = "";
-  String gearTailPositionPct = "";
-  String gearAuxPosition = "";
-  String gearTotalPct = "";
+  byte gearCenterPositionPct;
+  byte gearLeftPositionPct;
+  byte gearRightPositionPct;
+  byte gearTailPositionPct;
+  byte gearAuxPosition;
+  byte gearTotalPct;
 
   // Rudder/trim
-  String aileronTrimPct = "";
-  String aileronTrimDegr = "";
-  String rudderTrimDegr = "";
-  String rudderTrimPct = "";
-  String elevatorTrimPos = "";
-  String elevatorTrimPct = "";
+  byte aileronTrimPct;
+  int aileronTrimDegr;
+  int rudderTrimDegr;
+  byte rudderTrimPct;
+  int elevatorTrimPos;
+  byte elevatorTrimPct;
 
   //Flaps
   int valSendFlapsUp = 501;
@@ -1120,8 +1131,9 @@ class BitsAndDroidsFlightConnector {
   int valSendFlapsInc = 506;
   int valSendFlapsDec = 507;
 
-
-
+  int calculateAxis(int value, int minVal, int maxVal);
+  int rightBrakeFormated = 0;
+  int leftBrakeFormated = 0;
   // Plane data
   String planeName = "";
   String receivedValue;
