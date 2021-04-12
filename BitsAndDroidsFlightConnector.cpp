@@ -40,7 +40,22 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
 }
 
 #endif
+void BitsAndDroidsFlightConnector::sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal){
 
+   elevator = (EMA_a * analogRead(elevatorPin)) + ((1-EMA_a) * elevator);
+   aileron = (EMA_a * analogRead(aileronPin)) + ((1-EMA_a) * aileron);
+   if(elevator != oldElevator || oldAileron != aileron){
+       elevatorPercentage = getPercentage(elevator, minVal, maxVal, reversedElevator);
+       oldElevator = elevator;
+       aileronPercentage = getPercentage(aileron, minVal, maxVal, reversedAileron);
+       oldAileron = aileron;
+       packagedData = sprintf(valuesBuffer, "%s %i %i", "103", elevatorPercentage,
+               aileronPercentage);
+       this->serial->println(valuesBuffer);
+   }
+
+
+}
 void BitsAndDroidsFlightConnector::sendCombinedThrottleValues() {
   packagedData = sprintf(valuesBuffer, "%s %i %i %i %i", "199", engines[0],
                          engines[1], engines[2], engines[3]);
@@ -109,8 +124,13 @@ void BitsAndDroidsFlightConnector::sendSetElevatorTrim(int value){
         this->serial->println(valuesBuffer);
 }
 
-byte BitsAndDroidsFlightConnector::getPercentage(int value, int minVal, float maxVal) {
-   byte percentage = map(value, minVal,maxVal, 0,100);
+byte BitsAndDroidsFlightConnector::getPercentage(int value, int minVal, float max, bool flipped) {
+    byte percentage = 0;
+    if (!flipped){
+        percentage = map(value, minVal,max, 0,100);
+    } else{
+        percentage = map(value, max,minVal, 0,100);
+    }
    return percentage;
 }
 
@@ -564,6 +584,194 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         navObs2 = cutValue.toInt();
         break;
     }
+    case 234:{
+        fuelTankCenterLevel = cutValue.toInt();
+        break;
+    }
+    case 235:{
+        fuelTankCenter2Level = cutValue.toInt();
+        break;
+    }
+
+    case 236:{
+        fuelTankCenter3Level = cutValue.toInt();
+        break;
+    }
+
+    case 237:{
+        fuelTankLeftMainLevel = cutValue.toInt();
+        break;
+    }
+
+    case 238:{
+        fuelTankLeftAuxLevel = cutValue.toInt();
+        break;
+    }
+
+    case 239:{
+        fuelTankLeftTipLevel = cutValue.toInt();
+        break;
+    }
+
+    case 240:{
+        fuelTankRightMainLevel = cutValue.toInt();
+        break;
+    }
+
+    case 241:{
+        fuelTankRightAuxLevel = cutValue.toInt();
+        break;
+    }
+
+    case 242:{
+        fuelTankRightTipLevel = cutValue.toInt();
+        break;
+    }
+
+    case 243:{
+        fuelTankExternal1Level = cutValue.toInt();
+        break;
+    }
+
+    case 244:{
+        fuelTankExternal2Level = cutValue.toInt();
+        break;
+    }
+
+    case 245:{
+        fuelTankCenterCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 246:{
+        fuelTankCenter2Capacity = cutValue.toInt();
+        break;
+    }
+
+    case 247:{
+        fuelTankCenter3Capacity = cutValue.toInt();
+        break;
+    }
+
+    case 248:{
+        fuelTankLeftMainCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 249:{
+        fuelTankLeftAuxCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 250:{
+        fuelTankLeftTipCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 251:{
+        fuelTankRightMainCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 252:{
+        fuelTankRightAuxCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 253:{
+        fuelTankRightTipCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 254:{
+        fuelTankExternal1Capacity = cutValue.toInt();
+        break;
+    }
+
+    case 255:{
+        fuelTankExternal2Capacity = cutValue.toInt();
+        break;
+    }
+
+    case 256:{
+        fuelTankLeftCapacity = cutValue.toFloat();
+        break;
+    }
+    case 257:{
+        fuelTankRightCapacity = cutValue.toFloat();
+        break;
+    }
+    case 258:{
+        fuelTankCenterQuantity = cutValue.toInt();
+        break;
+    }
+    case 259:{
+        fuelTankCenter2Quantity = cutValue.toInt();
+        break;
+    }
+    case 260:{
+        fuelTankCenter3Quantity = cutValue.toInt();
+        break;
+    }
+    case 261:{
+        fuelTankLeftMainQuantity = cutValue.toInt();
+        break;
+    }
+
+    case 262:{
+        fuelTankLeftAuxQuantity = cutValue.toInt();
+        break;
+    }
+
+    case 263:{
+        fuelTankLeftTipQuantity = cutValue.toInt();
+        break;
+    }
+
+    case 264:{
+        fuelTankRightMainQuantity = cutValue.toInt();
+        break;
+    }
+
+    case 265:{
+        fuelTankRightAuxCapacity = cutValue.toInt();
+        break;
+    }
+
+    case 266:{
+        fuelTankRightTipQuantity = cutValue.toInt();
+        break;
+    }
+
+    case 267:{
+        fuelTankExternal1Quantity = cutValue.toInt();
+        break;
+    }
+    case 268:{
+        fuelTankExternal2Quantity = cutValue.toInt();
+        break;
+    }
+
+    case 269:{
+        fuelTankLeftQuantity = cutValue.toFloat();
+        break;
+    }
+    case 270:{
+        fuelTankRightQuantity = cutValue.toFloat();
+        break;
+    }
+    case 271:{
+        fuelTankTotalQuantity = cutValue.toInt();
+        break;
+    }
+    case 505:{
+        parkingBrakeIndicator = convBool(cutValue);
+        break;
+    }
+
+
+
+
 
       default:
         break;
@@ -580,13 +788,10 @@ void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
   if (propValue1 != oldPropValue1 || propValue2 != oldPropValue2) {
     oldPropValue1 = propValue1;
     oldPropValue2 = propValue2;
-    if(!reversed){
-        prop1 = getPercentage(propValue1,minVal, maxVal);
-        prop2 = getPercentage(propValue2,minVal, maxVal);
-    } else{
-        prop1 = 100 - getPercentage(propValue1,minVal, maxVal);
-        prop2 = 100 - getPercentage(propValue2,minVal, maxVal);
-    }
+
+        prop1 = getPercentage(propValue1,minVal, maxVal, reversed);
+        prop2 = getPercentage(propValue2,minVal, maxVal, reversed);
+
 
 
     props[0] = prop1;
@@ -603,35 +808,27 @@ void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
   if (mixtureValue1 != oldMixtureValue1 || mixtureValue2 != oldMixtureValue2) {
     oldMixtureValue1 = mixtureValue1;
     oldMixtureValue2 = mixtureValue2;
-    if(!reversed){
-    mixturePercentage[0] = getPercentage(mixtureValue1, minVal,maxVal);
-    mixturePercentage[1] = getPercentage(mixtureValue2, minVal,maxVal);
+
+    mixturePercentage[0] = getPercentage(mixtureValue1, minVal,maxVal, reversed);
+    mixturePercentage[1] = getPercentage(mixtureValue2, minVal,maxVal, reversed);
     }
-    else{
-        mixturePercentage[0] = 100 - getPercentage(mixtureValue1, minVal,maxVal);
-        mixturePercentage[1] = 100 - getPercentage(mixtureValue2, minVal,maxVal);
-    }
+
 
     sendCombinedMixtureValues();
   }
-}
+
 void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin,
                                                        int minVal,float maxVal, bool reversed) {
   value = (EMA_a * analogRead(throttlePin)) + ((1 - EMA_a) * value);
 
   if (value != oldValue) {
     oldValue = value;
-    if(!reversed){
-    engine1 = getPercentage(value,minVal, maxVal);
-    engine2 = getPercentage(value, minVal,maxVal);
-    engine3 = getPercentage(value, minVal,maxVal);
-    engine4 = getPercentage(value, minVal,maxVal);
-    } else{
-        engine1 = 100 - getPercentage(value,minVal, maxVal);
-        engine2 = 100 - getPercentage(value,minVal, maxVal);
-        engine3 = 100 - getPercentage(value, minVal,maxVal);
-        engine4 = 100 - getPercentage(value, minVal,maxVal);
-    }
+
+    engine1 = getPercentage(value,minVal, maxVal, reversed);
+    engine2 = getPercentage(value, minVal,maxVal, reversed);
+    engine3 = getPercentage(value, minVal,maxVal, reversed);
+    engine4 = getPercentage(value, minVal,maxVal, reversed);
+
 
     engines[0] = engine1;
     engines[1] = engine2;
@@ -652,41 +849,27 @@ void BitsAndDroidsFlightConnector::advancedInputHandling(
 
   if (valueEng1 != oldValueEng1) {
     oldValueEng1 = valueEng1;
-    if(!reversed){
-    engine1 = getPercentage(valueEng1, minVal,maxVal);
-    } else{
-         engine1 = 100 - getPercentage(valueEng1, minVal,maxVal);
-    }
+
+    engine1 = 100 - getPercentage(valueEng1, minVal,maxVal, reversed);
     engines[0] = engine1;
     changed = true;
   }
   if (valueEng2 != oldValueEng2) {
     oldValueEng2 = valueEng2;
-    if(!reversed){
-    engine2 = getPercentage(valueEng2,minVal, maxVal);
-    } else{
-        engine2 = 100 - getPercentage(valueEng2, minVal,maxVal);
-    }
+    engine2 = 100 - getPercentage(valueEng2, minVal,maxVal, reversed);
     engines[1] = engine2;
     changed = true;
   }
   if (valueEng3 != oldValueEng3) {
     oldValueEng3 = valueEng3;
-    if(!reversed){
-    engine3 = getPercentage(valueEng3,minVal,maxVal);
-    } else {
-        engine3 = 100 - getPercentage(valueEng3, minVal,maxVal);
-    }
+    engine3 = getPercentage(valueEng3,minVal,maxVal, reversed);
     engines[2] = engine3;
     changed = true;
   }
   if (valueEng4 != oldValueEng4) {
     oldValueEng4 = valueEng4;
-    if(!reversed){
-    engine4 = getPercentage(valueEng4,minVal, maxVal);
-    } else {
-        engine4 = 100 - getPercentage(valueEng4, minVal,maxVal);
-    }
+
+    engine4 = 100 - getPercentage(valueEng4, minVal,maxVal, reversed);
     engines[3] = engine4;
     changed = true;
   }

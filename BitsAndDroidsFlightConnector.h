@@ -28,10 +28,11 @@ class BitsAndDroidsFlightConnector {
   void mixtureInputHandling(int mixturePin1, int mixturePin2, int minVal,float maxVal, bool reversed);
   void sendSetElevatorTrim(int value);
   void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
+  void sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal);
   void sendSetRudderPot(byte rudderPin,int minVal, int maxVal);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
-  byte getPercentage(int value, int minVal, float maxVal);
+  byte getPercentage(int value, int minVal, float maxVal, bool reversed);
 
   //Data
   int feetAboveGround = 0;
@@ -165,6 +166,50 @@ class BitsAndDroidsFlightConnector {
   bool getAPAutothrottleOn(){return APAutothrottleOn;};
   bool getAPVerticalHoldOn(){return APVerticalHoldOn;};
   bool getAPRPMHoldOn(){return APRPMHoldOn;};
+
+  bool getParkingBrakeIndicator(){return parkingBrakeIndicator;};
+
+  byte getFuelTankCenterLevel(){return fuelTankCenterLevel;};
+  byte getFuelTankCenter2Level(){return fuelTankCenter2Level;};
+  byte getFuelTankCenter3Level(){return fuelTankCenter3Level;};
+  byte getFuelTankLeftMainLevel(){return fuelTankLeftMainLevel;};
+  byte getFuelTankLeftAuxLevel(){return fuelTankLeftAuxLevel;};
+  byte getFuelTankLeftTipLevel(){return fuelTankLeftTipLevel;};
+  byte getFuelTankRightMainLevel(){return fuelTankRightMainLevel;};
+  byte getFuelTankRightAuxLevel(){return fuelTankRightAuxLevel;};
+  byte getFuelTankRightTipLevel(){return fuelTankRightTipLevel;};
+  byte getFuelTankExternal1Level(){return fuelTankExternal1Level;};
+  byte getFuelTankExternal2Level(){return fuelTankExternal2Level;};
+
+  int getFuelTankCenter(){return fuelTankCenterCapacity;};
+int getFuelTankCenter2() {return fuelTankCenter2Capacity;};
+int getFuelTankCenter3(){return fuelTankCenter3Capacity;};
+int getFuelTankLeftMainCapacity() {return fuelTankLeftMainCapacity;};
+int getFuelTankLeftAuxCapacity()  {return fuelTankLeftAuxCapacity;};
+int getFuelTankLeftTipCapacity()  {return fuelTankLeftTipCapacity;};
+int getFuelTankRightMainCapacity()  {return fuelTankRightMainCapacity;};
+int getFuelTankRightAuxCapacity()  {return fuelTankRightAuxCapacity;};
+int getFuelTankRightTipCapacity()  {return fuelTankRightTipCapacity;};
+int getFuelTankExternal1Capacity()  {return fuelTankExternal1Capacity;};
+int getFuelTankExternal2Capacity() {return fuelTankExternal2Capacity;};
+float getFuelTankLeftCapacity()  {return fuelTankLeftCapacity;};
+float getFuelTankRightCapacity()  {return fuelTankRightCapacity;};
+int getFuelTankCenterQuantity() {return fuelTankCenterQuantity;};
+int getFuelTankCenter2Quantity()  {return fuelTankCenter2Quantity;};
+int getFuelTankCenter3Quantity() {return fuelTankCenter3Quantity;};
+int getFuelTankLeftMainQuantity(){return fuelTankLeftMainQuantity;};
+int getFuelTankLeftAuxQuantity(){return fuelTankLeftAuxQuantity;};
+int getFuelTankLeftTipQuantity(){return fuelTankLeftTipQuantity;};
+int getFuelTankRightMainQuantity(){return fuelTankRightMainQuantity;};
+int getFuelTankRightAuxQuantity(){return fuelTankRightAuxQuantity;}
+int getFuelTankRightTipQuantity(){return fuelTankRightTipQuantity;};
+int getFuelTankExternal1Quantity(){return fuelTankExternal1Quantity;};
+int getFuelTankExternal2Quantity(){return fuelTankExternal2Quantity;};
+float getFuelTankLeftQuantity(){return fuelTankLeftQuantity;};
+float getFuelTankRightQuantity(){return fuelTankRightQuantity;};
+int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
+
+
 
   // Plane data
   String getPlaneName(){return planeName;};
@@ -991,6 +1036,18 @@ class BitsAndDroidsFlightConnector {
   bool APVerticalHoldOn = false;
   bool APRPMHoldOn = false;
 
+byte fuelTankCenterLevel;
+byte fuelTankCenter2Level;
+byte fuelTankCenter3Level;
+byte fuelTankLeftMainLevel;
+byte fuelTankLeftAuxLevel;
+byte fuelTankLeftTipLevel;
+byte fuelTankRightMainLevel;
+byte fuelTankRightAuxLevel;
+byte fuelTankRightTipLevel;
+byte fuelTankExternal1Level;
+byte fuelTankExternal2Level;
+
   // warnings
   bool stallWarning = false;
   bool overspeedWarning = false;
@@ -1004,6 +1061,13 @@ class BitsAndDroidsFlightConnector {
   byte engine2 = 0;
   byte engine3 = 0;
   byte engine4 = 0;
+
+  int elevator = 0;
+  int aileron = 0;
+  byte elevatorPercentage = 0;
+  byte aileronPercentage = 0;
+  int oldElevator = 0;
+  int oldAileron = 0;
 
   byte prop1 = 0;
   byte prop2 = 0;
@@ -1103,6 +1167,8 @@ class BitsAndDroidsFlightConnector {
   byte leadingEdgeFlapsLeftAngle;
   byte leadingEdgeFlapsRightAngle;
 
+  bool parkingBrakeIndicator;
+
   // Gears
   bool gearHandlePos = false;
   int gearHydraulicPressure;
@@ -1130,6 +1196,34 @@ class BitsAndDroidsFlightConnector {
   int valSendFlapsDown = 505;
   int valSendFlapsInc = 506;
   int valSendFlapsDec = 507;
+
+  int fuelTankCenterCapacity;
+  int fuelTankCenter2Capacity;
+  int fuelTankCenter3Capacity;
+  int fuelTankLeftMainCapacity;
+  int fuelTankLeftAuxCapacity;
+  int fuelTankLeftTipCapacity;
+  int fuelTankRightMainCapacity;
+  int fuelTankRightAuxCapacity;
+  int fuelTankRightTipCapacity;
+  int fuelTankExternal1Capacity;
+  int fuelTankExternal2Capacity;
+  float fuelTankLeftCapacity;
+  float fuelTankRightCapacity;
+  int fuelTankCenterQuantity;
+  int fuelTankCenter2Quantity;
+  int fuelTankCenter3Quantity;
+  int fuelTankLeftMainQuantity;
+  int fuelTankLeftAuxQuantity;
+  int fuelTankLeftTipQuantity;
+  int fuelTankRightMainQuantity;
+  int fuelTankRightAuxQuantity;
+  int fuelTankRightTipQuantity;
+  int fuelTankExternal1Quantity;
+  int fuelTankExternal2Quantity;
+  float fuelTankLeftQuantity;
+  float fuelTankRightQuantity;
+  int fuelTankTotalQuantity;
 
   int calculateAxis(int value, int minVal, int maxVal);
   int rightBrakeFormated = 0;
