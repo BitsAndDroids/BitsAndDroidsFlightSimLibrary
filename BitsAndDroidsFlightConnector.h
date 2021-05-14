@@ -19,13 +19,12 @@ class BitsAndDroidsFlightConnector {
 
   void switchHandling();
   void dataHandling();
-  void simpleInputHandling(int throttlePin,int minVal, float maxVal, bool reversed);
-  void advancedInputHandling(int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin,
-                            int minVal, float maxVal, bool reversed);
+  void simpleInputHandling(int throttlePin);
+  void advancedInputHandling(int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin);
   void superAdvancedInputHandling(byte eng1Percentage, byte eng2Percentage, byte eng3Percentage, byte eng4Percentage);
   void sendCombinedMixtureValues();
-  void propsInputHandling(int propPin1, int propPin2, int minVal, float maxVal, bool reversed);
-  void mixtureInputHandling(int mixturePin1, int mixturePin2, int minVal,float maxVal, bool reversed);
+  void propsInputHandling(int propPin1, int propPin2);
+  void mixtureInputHandling(int mixturePin1, int mixturePin2);
   void sendSetElevatorTrim(int value);
   void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
   void sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal);
@@ -33,7 +32,7 @@ class BitsAndDroidsFlightConnector {
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal, bool reversed);
-
+  //void setSampleSize(byte amntSamples){sampleSize = amntSamples;};
   //Data
   int feetAboveGround = 0;
   int getFeetAboveGround(){return feetAboveGround;};
@@ -75,14 +74,14 @@ class BitsAndDroidsFlightConnector {
   bool getLightLandingOn(){return lightLandingOn;};
 
   // Coms
-  String getActiveCom1(){return activeCom1;};
-  String getActiveCom2(){return activeCom2;};
-  String getStandbyCom1(){return standByCom1;};
-  String getStandbyCom2(){return standByCom2;};
-  String getActiveNav1(){return activeNav1;};
-  String getActiveNav2(){return activeNav2;};
-  String getStandbyNav1(){return standbyNav1;};
-  String getStandbyNav2(){return standbyNav2;};
+  long getActiveCom1(){return activeCom1;};
+  long getActiveCom2(){return activeCom2;};
+  long getStandbyCom1(){return standByCom1;};
+  long getStandbyCom2(){return standByCom2;};
+  long getActiveNav1(){return activeNav1;};
+  long getActiveNav2(){return activeNav2;};
+  long getStandbyNav1(){return standbyNav1;};
+  long getStandbyNav2(){return standbyNav2;};
   String getNavRadialError1(){return navRadialError1;};
   String getNavVorLationalt1(){return navVorLationalt1;};
 
@@ -119,12 +118,12 @@ class BitsAndDroidsFlightConnector {
   byte getGearTotalPct(){return gearTotalPct;};
 
   // Rudder/Trim
-  byte getAileronTrimPct(){return aileronTrimPct;};
+  int getAileronTrimPct(){return aileronTrimPct;};
   int getAileronTrimDegr(){return aileronTrimDegr;};
   int getRudderTrimDegr(){return rudderTrimDegr;};
-  byte getRudderTrimPct(){return rudderTrimPct;};
+  int getRudderTrimPct(){return rudderTrimPct;};
   int getElevatorTrimPos(){return elevatorTrimPos;};
-  byte getElevatorTrimPct(){return elevatorTrimPct;};
+  int getElevatorTrimPct(){return elevatorTrimPct;};
 
   // DME
   String getNavDme1(){return navDme1;};
@@ -761,7 +760,8 @@ int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
 
   // library-accessible "private" interface
 
- private:
+  int smoothPot(byte potPin);
+private:
   //--------------------------------------------
   // TRANSMIT DATA
   // These values can be ommited and printed to serial directly
@@ -1057,24 +1057,24 @@ byte fuelTankExternal2Level;
   char valuesBuffer[40];
 
   bool advanced;
-  byte engine1 = 0;
-  byte engine2 = 0;
-  byte engine3 = 0;
-  byte engine4 = 0;
+  int engine1 = 0;
+  int engine2 = 0;
+  int engine3 = 0;
+  int engine4 = 0;
 
   int elevator = 0;
   int aileron = 0;
-  byte elevatorPercentage = 0;
-  byte aileronPercentage = 0;
+  int elevatorPercentage = 0;
+  int aileronPercentage = 0;
   int oldElevator = 0;
   int oldAileron = 0;
 
-  byte prop1 = 0;
-  byte prop2 = 0;
+  int prop1 = 0;
+  int prop2 = 0;
 
-  byte engines[4] = {0, 0, 0, 0};
-  byte mixturePercentage[2] = {0,0};
-  byte props[2] = {0, 0};
+  int engines[4] = {0, 0, 0, 0};
+  int mixturePercentage[2] = {0,0};
+  int props[2] = {0, 0};
 
   int value;
   int propValue1;
@@ -1120,16 +1120,16 @@ byte fuelTankExternal2Level;
 
 
   // Coms
-  String activeCom1 = "";
-  String activeCom2 = "";
-  String standByCom1 = "";
-  String standByCom2 = "";
-  String activeNav1 = "";
-  String activeNav2 = "";
-  String standbyNav1 = "";
-  String standbyNav2 = "";
-  String navRadialError1 = "";
-  String navVorLationalt1 = "";
+  long activeCom1;
+  long activeCom2;
+  long standByCom1;
+  long standByCom2;
+  long activeNav1;
+  long activeNav2;
+  long standbyNav1;
+  long standbyNav2;
+  String navRadialError1;
+  String navVorLationalt1;
 
   // GPS
   int gpsCourseToSteer;
@@ -1181,12 +1181,12 @@ byte fuelTankExternal2Level;
   byte gearTotalPct;
 
   // Rudder/trim
-  byte aileronTrimPct;
+  int aileronTrimPct;
   int aileronTrimDegr;
   int rudderTrimDegr;
-  byte rudderTrimPct;
+  int rudderTrimPct;
   int elevatorTrimPos;
-  byte elevatorTrimPct;
+  int elevatorTrimPct;
 
   //Flaps
   int valSendFlapsUp = 501;
@@ -1235,6 +1235,11 @@ byte fuelTankExternal2Level;
   String cutValue = "";
   float EMA_a = 0.1;
   int EMA_S = 0;
+  int average = 0;
+  int total = 0;
+
+  static const int samples = 10;
+
 };
 
 #endif

@@ -40,17 +40,35 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
 }
 
 #endif
+int BitsAndDroidsFlightConnector::smoothPot(byte potPin){
+    int readings[samples]={};
+    total = 0;
+    for (byte i = 0; i < samples; i++){
+        total = total - readings[i];
+        readings[i] = analogRead(potPin);
+        total = total + readings[i];
+        delay(1);
+    }
+    average = total / samples;
+    return average;
+}
 void BitsAndDroidsFlightConnector::sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal){
 
-   elevator = (EMA_a * analogRead(elevatorPin)) + ((1-EMA_a) * elevator);
-   aileron = (EMA_a * analogRead(aileronPin)) + ((1-EMA_a) * aileron);
+    elevator = smoothPot(elevatorPin);
+    if(reversedElevator){
+        elevator = 1023-elevator;
+    }
+
+    aileron = smoothPot(aileronPin);
+    if(reversedAileron){
+        aileron = 1023-aileron;
+    }
+
    if(elevator != oldElevator || oldAileron != aileron){
-       elevatorPercentage = getPercentage(elevator, minVal, maxVal, reversedElevator);
+       packagedData = sprintf(valuesBuffer, "%s %i %i", "103", elevator,
+               aileron);
        oldElevator = elevator;
-       aileronPercentage = getPercentage(aileron, minVal, maxVal, reversedAileron);
        oldAileron = aileron;
-       packagedData = sprintf(valuesBuffer, "%s %i %i", "103", elevatorPercentage,
-               aileronPercentage);
        this->serial->println(valuesBuffer);
    }
 
@@ -120,7 +138,7 @@ int BitsAndDroidsFlightConnector::calculateAxis(int value, int minVal, int maxVa
     return map(value, minVal, maxVal, -16383, 16383);
 }
 void BitsAndDroidsFlightConnector::sendSetElevatorTrim(int value){
-        packagedData = sprintf(valuesBuffer, "%s i%","900", value);
+        packagedData = sprintf(valuesBuffer, "%s %i","900", value);
         this->serial->println(valuesBuffer);
 }
 
@@ -469,35 +487,35 @@ void BitsAndDroidsFlightConnector::switchHandling(){
         break;
       }
       case 900: {
-        activeCom1 = convertToFreq(cutValue);
+        activeCom1 = cutValue.toInt();
         break;
       }
       case 901: {
-        standByCom1 = convertToFreq(cutValue);
+        standByCom1 = cutValue.toInt();
         break;
       }
       case 902: {
-        activeCom2 = convertToFreq(cutValue);
+        activeCom2 = cutValue.toInt();
         break;
       }
       case 903: {
-        standByCom2 = convertToFreq(cutValue);
+        standByCom2 = cutValue.toInt();
         break;
       }
       case 910: {
-        activeNav1 = convertToNavFreq(cutValue);
+        activeNav1 = cutValue.toInt();
         break;
       }
       case 911: {
-        standbyNav1 = convertToNavFreq(cutValue);
+        standbyNav1 = cutValue.toInt();
         break;
       }
       case 912: {
-        activeNav2 = convertToNavFreq(cutValue);
+        activeNav2 = cutValue.toInt();
         break;
       }
       case 913: {
-        standbyNav2 = convertToNavFreq(cutValue);
+        standbyNav2 = cutValue.toInt();
         break;
       }
       case 914: {
@@ -781,96 +799,78 @@ void BitsAndDroidsFlightConnector::switchHandling(){
 
 
 void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
-                                                      int propPin2,
-                                                      int minVal,float maxVal, bool reversed) {
-  propValue1 = (EMA_a * analogRead(propPin1)) + ((1 - EMA_a) * propValue1);
-  propValue2 = (EMA_a * analogRead(propPin2)) + ((1 - EMA_a) * propValue2);
+                                                      int propPin2) {
+  propValue1 = smoothPot(propPin1);
+  propValue2 = smoothPot(propPin2);
   if (propValue1 != oldPropValue1 || propValue2 != oldPropValue2) {
     oldPropValue1 = propValue1;
     oldPropValue2 = propValue2;
 
-        prop1 = getPercentage(propValue1,minVal, maxVal, reversed);
-        prop2 = getPercentage(propValue2,minVal, maxVal, reversed);
 
 
-
-    props[0] = prop1;
-    props[1] = prop2;
+    props[0] = propValue1;
+    props[1] = propValue2;
 
     sendCombinedPropValues();
   }
 }
 void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
-                                                      int mixturePin2,
-                                                      int minVal,float maxVal,bool reversed) {
-  mixtureValue1 = (EMA_a * analogRead(mixturePin1)) + ((1 - EMA_a) * mixtureValue1);
-  mixtureValue2 = (EMA_a * analogRead(mixturePin2)) + ((1 - EMA_a) * mixtureValue2);
+                                                      int mixturePin2) {
+  mixtureValue1 = smoothPot(mixturePin1);
+  mixtureValue2 = smoothPot(mixturePin2);
   if (mixtureValue1 != oldMixtureValue1 || mixtureValue2 != oldMixtureValue2) {
     oldMixtureValue1 = mixtureValue1;
     oldMixtureValue2 = mixtureValue2;
 
-    mixturePercentage[0] = getPercentage(mixtureValue1, minVal,maxVal, reversed);
-    mixturePercentage[1] = getPercentage(mixtureValue2, minVal,maxVal, reversed);
+    mixturePercentage[0] = mixtureValue1;
+    mixturePercentage[1] = mixtureValue2;
+    sendCombinedMixtureValues();
     }
 
 
-    sendCombinedMixtureValues();
+
   }
 
-void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin,
-                                                       int minVal,float maxVal, bool reversed) {
-  value = (EMA_a * analogRead(throttlePin)) + ((1 - EMA_a) * value);
+void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin) {
+  value = smoothPot(throttlePin);
 
   if (value != oldValue) {
     oldValue = value;
 
-    engine1 = getPercentage(value,minVal, maxVal, reversed);
-    engine2 = getPercentage(value, minVal,maxVal, reversed);
-    engine3 = getPercentage(value, minVal,maxVal, reversed);
-    engine4 = getPercentage(value, minVal,maxVal, reversed);
-
-
-    engines[0] = engine1;
-    engines[1] = engine2;
-    engines[2] = engine3;
-    engines[3] = engine4;
+    engines[0] = value;
+    engines[1] = value;
+    engines[2] = value;
+    engines[3] = value;
 
     sendCombinedThrottleValues();
   }
 }
 void BitsAndDroidsFlightConnector::advancedInputHandling(
-    int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin,int minVal,
-    float maxVal,bool reversed) {
-  valueEng1 = (EMA_a * analogRead(eng1Pin)) + ((1 - EMA_a) * valueEng1);
-  valueEng2 = (EMA_a * analogRead(eng2Pin)) + ((1 - EMA_a) * valueEng2);
-  valueEng3 = (EMA_a * analogRead(eng3Pin)) + ((1 - EMA_a) * valueEng3);
-  valueEng4 = (EMA_a * analogRead(eng4Pin)) + ((1 - EMA_a) * valueEng4);
+    int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin) {
+  valueEng1 = smoothPot(eng1Pin);
+  valueEng2 = smoothPot(eng2Pin);
+  valueEng3 = smoothPot(eng3Pin);
+  valueEng4 = smoothPot(eng4Pin);
   bool changed = false;
 
   if (valueEng1 != oldValueEng1) {
     oldValueEng1 = valueEng1;
-
-    engine1 = 100 - getPercentage(valueEng1, minVal,maxVal, reversed);
-    engines[0] = engine1;
+    engines[0] = valueEng1;
     changed = true;
   }
   if (valueEng2 != oldValueEng2) {
     oldValueEng2 = valueEng2;
-    engine2 = 100 - getPercentage(valueEng2, minVal,maxVal, reversed);
-    engines[1] = engine2;
+    engines[1] = valueEng2;
     changed = true;
   }
   if (valueEng3 != oldValueEng3) {
     oldValueEng3 = valueEng3;
-    engine3 = getPercentage(valueEng3,minVal,maxVal, reversed);
-    engines[2] = engine3;
+    engines[2] = valueEng3;
     changed = true;
   }
   if (valueEng4 != oldValueEng4) {
     oldValueEng4 = valueEng4;
-
-    engine4 = 100 - getPercentage(valueEng4, minVal,maxVal, reversed);
-    engines[3] = engine4;
+    engines[3] = valueEng4;
     changed = true;
   }
 
@@ -895,7 +895,7 @@ String BitsAndDroidsFlightConnector::convertToFreq(String unprocFreq) {
 }
 String BitsAndDroidsFlightConnector::convertToNavFreq(String unprocFreq) {
   String stringA = unprocFreq.substring(0, 3);
-  String stringB = unprocFreq.substring(3, 5);
+  String stringB = unprocFreq.substring(3,5);
   return stringA + "." + stringB;
 }
 
