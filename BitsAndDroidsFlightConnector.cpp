@@ -87,6 +87,10 @@ void BitsAndDroidsFlightConnector::sendCombinedMixtureValues() {
          packagedData = sprintf(valuesBuffer, "%s %i %i", "115", mixturePercentage[0], mixturePercentage[1]);
   this->serial->println(valuesBuffer);
 }
+void BitsAndDroidsFlightConnector::sendFlaps(){
+    packagedData = sprintf(valuesBuffer, "%s %i", "421", flaps);
+this->serial->println(valuesBuffer);
+}
 
 void BitsAndDroidsFlightConnector::sendSetElevatorTrimPot(byte potPin,int minVal, int maxVal){
     currentTrim = (EMA_a * analogRead(potPin)) + ((1 - EMA_a) * currentTrim);
@@ -799,32 +803,51 @@ void BitsAndDroidsFlightConnector::switchHandling(){
 
 
 void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
-                                                      int propPin2) {
-  propValue1 = smoothPot(propPin1);
+                                                    int propPin2) {
+  bool changed = false;
+    propValue1 = smoothPot(propPin1);
   propValue2 = smoothPot(propPin2);
   if (propValue1 != oldPropValue1 || propValue2 != oldPropValue2) {
-    oldPropValue1 = propValue1;
-    oldPropValue2 = propValue2;
 
 
 
-    props[0] = propValue1;
+
+    if(abs(propValue1-oldPropValue1 )> 2){
+             props[0] = propValue1;
+             oldPropValue1 = propValue1;
+             changed = true;
+  }
+    if(abs(propValue2-oldPropValue2 )> 2){
     props[1] = propValue2;
-
+     oldPropValue2 = propValue2;
+    changed = true;
+  }
+    if(changed){
     sendCombinedPropValues();
+    }
   }
 }
 void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
                                                       int mixturePin2) {
+    bool changed = false;
   mixtureValue1 = smoothPot(mixturePin1);
   mixtureValue2 = smoothPot(mixturePin2);
   if (mixtureValue1 != oldMixtureValue1 || mixtureValue2 != oldMixtureValue2) {
-    oldMixtureValue1 = mixtureValue1;
-    oldMixtureValue2 = mixtureValue2;
 
+
+       if(abs(mixtureValue1-oldMixtureValue1 )> 2){
     mixturePercentage[0] = mixtureValue1;
+    oldMixtureValue1 = mixtureValue1;
+    changed = true;
+  }
+          if(abs(mixtureValue2-oldMixtureValue2 )> 2){
     mixturePercentage[1] = mixtureValue2;
+     oldMixtureValue2 = mixtureValue2;
+    changed = true;
+  }
+          if(changed){
     sendCombinedMixtureValues();
+          }
     }
 
 
@@ -834,7 +857,7 @@ void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
 void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin) {
   value = smoothPot(throttlePin);
 
-  if (value != oldValue) {
+  if (value != oldValue && abs(oldValue - value) > 1) {
     oldValue = value;
 
     engines[0] = value;
@@ -844,6 +867,13 @@ void BitsAndDroidsFlightConnector::simpleInputHandling(int throttlePin) {
 
     sendCombinedThrottleValues();
   }
+}
+void BitsAndDroidsFlightConnector::setPotFlaps(byte flapsPin){
+    flaps = smoothPot(flapsPin);
+    if(flaps != oldFlaps && abs(oldFlaps - flaps) > 2){
+        oldFlaps = flaps;
+        sendFlaps();
+    }
 }
 void BitsAndDroidsFlightConnector::advancedInputHandling(
     int eng1Pin, int eng2Pin, int eng3Pin, int eng4Pin) {

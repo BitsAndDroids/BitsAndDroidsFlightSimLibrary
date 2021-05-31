@@ -26,9 +26,11 @@ class BitsAndDroidsFlightConnector {
   void propsInputHandling(int propPin1, int propPin2);
   void mixtureInputHandling(int mixturePin1, int mixturePin2);
   void sendSetElevatorTrim(int value);
+  void sendFlaps();
+  void setPotFlaps(byte flapsPin);
   void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
   void sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal);
-  void sendSetRudderPot(byte rudderPin,int minVal, int maxVal);
+  void sendSetPot(byte rudderPin,int minVal, int maxVal);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal, bool reversed);
@@ -761,6 +763,7 @@ int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
   // library-accessible "private" interface
 
   int smoothPot(byte potPin);
+  void sendSetRudderPot(byte potPin, int minVal, int maxVal);
 private:
   //--------------------------------------------
   // TRANSMIT DATA
@@ -1001,6 +1004,7 @@ private:
   int indicatedGPSGroundspeed;
   int trueVerticalSpeed;
 
+
   // lights
   bool lightTaxiOn = false;
   bool lightStrobeOn = false;
@@ -1075,6 +1079,9 @@ byte fuelTankExternal2Level;
   int engines[4] = {0, 0, 0, 0};
   int mixturePercentage[2] = {0,0};
   int props[2] = {0, 0};
+
+  int flaps;
+  int oldFlaps;
 
   int value;
   int propValue1;
