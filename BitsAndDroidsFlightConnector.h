@@ -1,22 +1,647 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "modernize-use-nodiscard"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 #ifndef BitsAndDroidsFlightConnector_h
 #define BitsAndDroidsFlightConnector_h
 
 #ifndef ARDUINO_SAM_DUE
 #include "SoftwareSerial.h"
 #endif
+enum sendCommands {
+    sendApMasterOn = 301,
+    sendApPanelHeadingLock = 302,
+    sendAPPanelAltitudeHold = 303,
+    sendAPAttitudeHoldOn = 304,
+    sendAPLocHoldOn = 305,
+    sendAPAprHoldOn = 306,
+    sendAPHeadingHoldOn = 307,
+    sendAltitudeHoldOn = 367,
+    sendApWingLevelerOn = 309,
+    sendBCHoldOn = 310,
+    sendAPNav1HoldOn = 311,
+    sendAPAttitudeHoldOff = 312,
+    sendAPLocHoldOff = 313,
+    sendAprHoldOff = 314,
+    sendAPHeadingHoldOff = 315,
+    sendAvionicsMaster1On = 401,
+    sendAvionicsMaster1Off = 402,
+    sendAvionicsMaster2On = 403,
+    sendAvionicsMaster2Off = 404,
+    sendParkingBrake = 420,
+
+    sendMixtureInput = 115,
+
+    sendToggleMasterBattery1 = 405,
+    sendToggleMasterBattery2 = 406,
+    sendToggleExternalPower = 408,
+
+    sendToggleMasterAlternator = 407,
+
+    sendXpndr1000Inc = 171,
+    sendXpndr100Inc = 172,
+    sendXpndr10Inc = 173,
+    sendXpndr1Inc = 174,
+    sendXpndr1000Dec = 175,
+    sendXpndr100Dec = 176,
+    sendXpndr10Dec = 177,
+    sendXpndr1Dec = 178,
+    sendXpndrSet = 202,
+
+
+    sendSelectedAdfIdentEnable = 158,
+    sendSelectedAdfIdentDisable = 159,
+    sendSelecetedAdfIdentSet = 160,
+    sendSelectedAdfIdentToggle = 161,
+    sendAdfCardInc = 162,
+    sendAdfCardDec = 163,
+    sendAdfCardSet = 164,
+    sendAdf100Inc = 165,
+    sendAdf10Inc = 166,
+    sendAdf1Inc = 167,
+    sendAdf100Dec = 168,
+    sendAdf10Dec = 169,
+    sendAdf1Dec = 170,
+    sendAdfCompleteSet = 179,
+    sendAdf1WholeInc = 180,
+    sendAdf1WholeDec = 181,
+    sendAdf2100Inc = 182,
+    sendAdf210Inc = 183,
+    sendAdf21Inc = 184,
+    sendAdf2RadioThenthsInc = 185,
+    sendAdf2100Dec = 186,
+    sendAdf210Dec = 187,
+    sendAdf21Dec = 188,
+    sendAdf2RadioThenthsDec = 189,
+    sendAdf2WholeInc = 190,
+    sendAdf2WholeDec = 191,
+    sendAdf2FractDecCarry = 192,
+    sendAdf2FractIncCarry = 193,
+    sendAdf2CompleteSet = 194,
+    sendAdf2IdentDisable = 195,
+    sendAdf2IdentEnable = 196,
+    sendAdf2IdentToggle = 197,
+    sendAdf2IdentSet = 200,
+
+
+    sendSelectedVor1IdentEnable = 145,
+    sendSelectedVor1IdentDisable = 146,
+    sendSelectedVor1IdentSet = 147,
+    sendVor1IdentToggle = 148,
+    sendVor2IdentEnable = 149,
+    sendVor2IdentDisable = 150,
+    sendVor2IdentSet = 151,
+    sendVor2IdentToggle = 152,
+    sendVorToggle = 153,
+    sendVor1ObiDec = 154,
+    sendVor1ObiInc = 155,
+    sendVor2ObiDec = 156,
+    sendVor2ObiInc = 157,
+
+    sendSelectedDme1IdentEnable = 136,
+    sendSeletedDme1IdentDisable = 137,
+    sendSelectedDme1IdentSet = 138,
+    sendSelectedDme1IdentToggle = 139,
+    sendSelectedDme2IdentEnable = 140,
+    sendSelectedDme2IdentDisable = 141,
+    sendSelectedDme2IdentSet = 142,
+    sendSelectedDme2IdentToggle = 143,
+    sendDmeToggle = 144,
+
+    sendAPAltitudeHoldOff = 316,
+    sendWingLevelerOff = 317,
+    sendAPBCHoldOff = 318,
+    sendAPNav1HoldOff = 319,
+    sendAPAirspeedHold = 320,
+    sendAPPanelSpeedHold = 321,
+    sendAPAltitudeInc = 322,
+    sendAPAltitudeDec = 323,
+    sendAPVSInc = 324,
+    sendAPVSDec = 325,
+    sendAPSpeedInc = 326,
+    sendAPSpeedDec = 327,
+    sendAPPanelMachHold = 328,
+    sendAPMachInc = 329,
+    sendAPMachDec = 330,
+    sendAPMachHold = 331,
+    sendAPAltitudeSetMetric = 332,
+    sendAPVSSetEnglish = 333,
+    sendAPSpeedSet = 334,
+    sendAPMachVarSet = 335,
+    sendAPAirspeedOn = 336,
+    sendAPAirspeedOff = 337,
+    sendAPAirspeedSet = 338,
+    sendAPMachOn = 339,
+    sendAPMachOff = 340,
+    sendAPMachSet = 341,
+    sendAPPanelAltitudeOn = 342,
+    sendAPPanelAltitudeOff = 343,
+    sendAPPanelAltitudeSet = 345,
+    sendAPPanelHeadingOn = 346,
+    sendAPPanelHeadingOff = 347,
+    sendAPPanelHeadingSet = 348,
+    sendAPPanelMachOn = 349,
+    sendAPPanelMachOff = 350,
+    sendAPPanelMachSet = 351,
+    sendAPPanelSpeedOn = 352,
+    sendAPPanelSpeedOff = 353,
+    sendAPPanelSpeedSet = 354,
+    sendAPPanelAltVarSetEnglish = 355,
+    sendAPVSVarSetMetric = 356,
+    sendAPPanelSpeedHoldToggle = 357,
+    sendAPPanelMachHoldToggle = 358,
+    sendAPNavSelectSet = 359,
+    sendAPPitchRefIncUp = 360,
+    sendAPPitchRefIncDown = 361,
+    sendAPPitchRefSelect = 362,
+    sendAPAttitudeHold = 363,
+    sendAPLocHold = 364,
+    sendAPAprHold = 365,
+    sendAPHeadingHold = 366,
+    sendAPAltitudeHold = 367,
+    sendAPWingLeveler = 368,
+    sendAPBCHold = 369,
+    sendAPNav1Hold = 370,
+    sendHeadingBugInc = 371,
+    sendHeadingBugDec = 372,
+    sendAPFlightDirector = 373,
+    sendAPVSHold = 374,
+    sndKohlsmanInc = 375,
+    sndKohlsmanDec = 376,
+    sendThrottleArm = 378,
+    sendhrottleArmToGa = 379,
+
+
+    slSendStandbyCom1Set = 100,
+    slSendStandbyCom2Set = 101,
+
+    sendCom1FractInc = 125,
+    sendCom1FractIncCarry = 127,
+    sendCom1FractDecr = 124,
+    sendCom1FractDecrCarry = 126,
+
+    sendCom2FractInc = 121,
+    sendCom2FractIncCarry = 123,
+    sendCom2FractDecr = 120,
+    sendCom2FractDecrCarry = 122,
+
+    sendCom1WholeDec = 111,
+    sendCom1WholeInc = 112,
+    sendCom2WholeDec = 113,
+    sendCom2WholeInc = 114,
+
+    sendSwapCom1 = 116,
+    sendSwapCom2 = 117,
+
+
+    slSendXpndrSet = 202,
+
+
+    sendIncWholeNav1 = 132,
+    sendDecWholeNav1 = 133,
+    sendIncWholeNav2 = 134,
+    sendDecWholeNav2 = 135,
+
+    sendIncFractNav1 = 128,
+    sendDecFractNav1 = 129,
+    sendIncFractNav2 = 130,
+    sendDecFractNav2 = 131,
+
+    sendSwapNav1 = 118,
+    sendSwapNav2 = 119,
+
+
+    sendG1000ZoomMapIn = 250,
+    sendG1000ZoomMapOut = 251,
+    sendFlapsUp = 501,
+    sendFlaps1 = 502,
+    sendFlaps2 = 503,
+    sendFlaps3 = 504,
+    sendFlapsDown = 505,
+    sendFlapsInc = 506,
+    sendFlapsDec = 507,
+    sendPitotHeatToggle =  508,
+    sendPitotHeatOn =  509,
+    sendPitotHeatOff =  510,
+    sendMagneto =  511,
+    sendMagnetoDecr =  512,
+    sendMagnetoIncr =  513,
+    sendMagneto1Off =  514,
+    sendMagneto1Right =  515,
+    sendMagneto1Left =  516,
+    sendMagneto1Both =  517,
+    sendMagneto1Start =  518,
+    sendMagneto2Off =  519,
+    sendMagneto2Right =  520,
+    sendMagneto2Left =  521,
+    sendMagneto2Both =  522,
+    sendMagneto2Start =  523,
+    sendMagneto3Off =  524,
+    sendMagneto3Right =  525,
+    sendMagneto3Left =  526,
+    sendMagneto3Both =  527,
+    sendMagneto3Start =  528,
+    sendMagneto4Off =  529,
+    sendMagneto4Right =  530,
+    sendMagneto4Left =  531,
+    sendMagneto4Both =  532,
+    sendMagneto4Start =  533,
+    sendMagnetoOff =  534,
+    sendMagnetoRight =  535,
+    sendMagnetoLeft =  536,
+    sendMagnetoBoth =  537,
+    sendMagnetoStart =  538,
+    sendMagneto1Decr =  539,
+    sendMagneto1Incr =  540,
+    sendMagneto2Decr =  541,
+    sendMagneto2Incr =  542,
+    sendMagneto3Decr =  543,
+    sendMagneto3Incr =  544,
+    sendMagneto4Decr =  545,
+    sendMagneto4Incr =  546,
+    sendMagnetoSet =  547,
+    sendMagneto1Set =  548,
+    sendMagneto2Set =  549,
+    sendMagneto3Set =  550,
+    sendMagneto4Set =  551,
+    sendAntiIceOn =  552,
+    sendAntiIceOff =  553,
+    sendAntiIceSet =  554,
+    sendAntiIceToggle =  555,
+    sendAntiIceToggleEng1 =  556,
+    sendAntiIceToggleEng2 =  557,
+    sendAntiIceToggleEng3 =  558,
+    sendAntiIceToggleEng4 =  559,
+    sendAntiIceSetEng1 =  560,
+    sendAntiIceSetEng2 =  561,
+    sendAntiIceSetEng3 =  562,
+    sendAntiIceSetEng4 =  563,
+    sendToggleFuelValveAll =  564,
+    sendToggleFuelValveEng1 =  565,
+    sendToggleFuelValveEng2 =  566,
+    sendToggleFuelValveEng3 =  567,
+    sendToggleFuelValveEng4 =  568,
+    sendFuelSelectorOff =  569,
+    sendFuelSelectorAll =  570,
+    sendFuelSelectorLeft =  571,
+    sendFuelSelectorRight =  572,
+    sendFuelSelectorLeftAux =  573,
+    sendFuelSelectorRightAux =  574,
+    sendFuelSelectorCenter =  575,
+    sendFuelSelectorSet =  576,
+    sendFuelSelector2Off =  577,
+    sendFuelSelector2All =  578,
+    sendFuelSelector2Left =  579,
+    sendFuelSelector2Right =  580,
+    sendFuelSelector2LeftAux =  581,
+    sendFuelSelector2RightAux =  582,
+    sendFuelSelector2Center =  583,
+    sendFuelSelector2Set =  584,
+    sendFuelSelector3Off =  585,
+    sendFuelSelector3All =  586,
+    sendFuelSelector3Left =  587,
+    sendFuelSelector3Right =  588,
+    sendFuelSelector3LeftAux =  589,
+    sendFuelSelector3RightAux =  590,
+    sendFuelSelector3Center =  591,
+    sendFuelSelector3Set =  592,
+    sendFuelSelector4Off =  593,
+    sendFuelSelector4All =  594,
+    sendFuelSelector4Left =  595,
+    sendFuelSelector4Right =  596,
+    sendFuelSelector4LeftAux =  597,
+    sendFuelSelector4RightAux =  598,
+    sendFuelSelector4Center =  599,
+    sendFuelSelector4Set =  600,
+    sendCrossFeedOpen =  601,
+    sendCrossFeedToggle =  602,
+    sendCrossFeedOff =  603,
+    sendElevTrimDn =  604,
+    sendDown =  605,
+    sendElevTrimUp =  606,
+    sendElevUp =  607,
+    sendSpoilersArmToggle =  608,
+    sendSpoilersOn =  609,
+    sendSpoilersOff =  610,
+    sendSpoilersArmOn =  611,
+    sendSpoilersArmOff =  612,
+    sendAileronTrimLeft =  613,
+    sendAileronTrimRight =  614,
+    sendRudderTrimLeft =  615,
+    sendRudderTrimRight =  616,
+    sendCowFlap1Set =  617,
+    sendCowlFlap2Set =  618,
+    sendCowlFlap3Set =  619,
+    sendCowlFlap4Set =  620,
+    sendIncCowlFlaps =  621,
+    sendDecCowlFlaps =  622,
+    sendIncCowlFlaps1 =  623,
+    sendDecCowlFlaps1 =  624,
+    sendIncCowlFlaps2 =  625,
+    sendDecCowlFlaps2 =  626,
+    sendIncCowlFlaps3 =  627,
+    sendDecCowlFlaps3 =  628,
+    sendIncCowlFlaps4 =  629,
+    sendDecCowlFlaps4 =  630,
+    sendFuelPump =  631,
+    sendToggleElectFuelPump =  632,
+    sendToggleElectFuelPump1 =  633,
+    sendToggleElectFuelPump2 =  634,
+    sendToggleElectFuelPump3 =  635,
+    sendToggleElectFuelPump4 =  636,
+    sendEnginePrimer =  637,
+    sendToggleEnginePrimer =  638,
+    sendTogglePrimer1 =  639,
+    sendTogglePrimer2 =  640,
+    sendTogglePrimer3 =  641,
+    sendTogglePrimer4 =  642,
+    sendToggleFeatherSwitches =  643,
+    sendToggleFeatherSwitch1 =  644,
+    sendToggleFeatherSwitch2 =  645,
+    sendToggleFeatherSwitch3 =  646,
+    sendToggleFeatherSwitch4 =  647,
+    sendTogglePropellerSync =  648,
+    sendToggleAutoFeatherArm =  649,
+    sendToggleAfterburner =  650,
+    sendToggleAfterburner1 =  651,
+    sendToggleAfterburner2 =  652,
+    sendToggleAfterburner3 =  653,
+    sendToggleAfterburner4 =  654,
+    sendEngine =  655,
+    sendSpoilersToggle =  656,
+    sendToggleStarter1 =  657,
+    sendToggleStarter2 =  658,
+    sendToggleStarter3 =  659,
+    sendToggleStarter4 =  660,
+    sendToggleAllStarters =  661,
+    sendEngineAutoStart =  662,
+    sendEngineAutoShutdown =  663,
+    sendFuelSelectorLeftMain =  664,
+    sendFuelSelector2LeftMain =  665,
+    sendFuelSelector3LeftMain =  666,
+    sendFuelSelector4LeftMain =  667,
+    sendFuelSelectorRightMain =  668,
+    sendFuelSelector2RightMain =  669,
+    sendFuelSelector3RightMain =  670,
+    sendFuelSelector4RightMain =  671,
+    sendApuStarter =  672,
+    sendApuOffSwitch =  673,
+    sendApuGeneratorSwitchToggle =  674,
+    sendCabinNoSmokingAlertSwitchToggle =  675,
+    sendCabinSeatbeltsAlertSwitchToggle =  676,
+
+    sendStrobesToggle =  677,
+    sendAllLightsToggle =  678,
+    sendPanelLightsToggle =  679,
+    sendLandingLightsToggle =  680,
+    sendLandingLightUp =  681,
+    sendLandingLightDown =  682,
+    sendLandingLightLeft =  683,
+    sendLandingLightRight =  684,
+    sendLandingLightHome =  685,
+    sendStrobesOn =  686,
+    sendStrobesOff =  687,
+    sendPanelLightsOn =  688,
+    sendPanelLightsOff =  689,
+    sendLandingLightsOn =  690,
+    sendLandingLightsOff =  691,
+    sendToggleBeaconLights =  692,
+    sendToggleTaxiLights =  693,
+    sendToggleLogoLights =  694,
+    sendToggleRecognitionLights =  695,
+    sendToggleWingLights =  696,
+    sendToggleNavLights =  697,
+    sendToggleCabinLights =  698,
+    sendGearUp =  699,
+    sendGearDown =  700,
+    sendToggleStructuralDeice =  701,
+    sendTogglePropellerDeice =  702,
+    sendToggleAlternator1 =  703,
+    sendToggleAlternator2 =  704,
+    sendToggleAlternator3 =  705,
+    sendToggleAlternator4 =  706,
+    sendAtc =  707,
+    sendATCMenu1 =  708,
+    sendATCMenu2 =  709,
+    sendATCMenu3 =  710,
+    sendATCMenu4 =  711,
+    sendATCMenu5 =  712,
+    sendATCMenu6 =  713,
+    sendATCMenu7 =  714,
+    sendATCMenu8 =  715,
+    sendATCMenu9 =  716,
+    sendATCMenu0 =  717,
+    sendEGT1Inc =  718,
+    sendEGT1Dec =  719,
+    sendEGT2Inc =  720,
+    sendEGT2Dec =  721,
+    sendEGT3Inc =  722,
+    sendEGT3Dec =  723,
+    sendEGT4Inc =  724,
+    sendEGT4Dec =  725,
+    sendEGTInc =  726,
+    sendEGTDec =  727,
+    sendToggleGPSDrivesNav1 =  728,
+    sendGPSPowerButton =  729,
+    sendGPSNearestButton =  730,
+    sendGPSObsButton =  731,
+    sendGPSMsgButton =  732,
+    sendGPSMsgButtonDown =  733,
+    sendGPSMsgButtonUp =  734,
+    sendGPSFlightplanButton =  735,
+    sendGPSTerrainButton =  736,
+    sendGPSProcedureButton =  737,
+    sendGPSZoominButton =  738,
+    sendGPSZoomoutButton =  739,
+    sendGPSDirectToButton =  740,
+    sendGPSMenuButton =  741,
+    sendGPSClearButton =  742,
+    sendGPSClearAllButton =  743,
+    sendGPSClearButtonDown =  744,
+    sendGPSClearButtonUp =  745,
+    sendGPSEnterButton =  746,
+    sendGPSCursorButton =  747,
+    sendGPSGroupKnobInc =  748,
+    sendGPSGroupKnobDec =  749,
+    sendGPSPageKnobInc =  750,
+    sendGPSPageKnobDec =  751,
+    sendYawDamperToggle =  752,
+    sendG1000PfdFlightplanButton =  753,
+    sendG1000PfdProcedureButton =  754,
+    sendG1000PfdZoominButton =  755,
+    sendG1000PfdZoomoutButton =  756,
+    sendG1000PfdDirectToButton =  757,
+    sendG1000PfdMenuButton =  758,
+    sendG1000PfdClearButton =  759,
+    sendG1000PfdEnterButton =  760,
+    sendG1000PfdCursorButton =  761,
+    sendG1000PfdGroupKnobInc =  762,
+    sendG1000PfdGroupKnobDec =  763,
+    sendG1000PfdPageKnobInc =  764,
+    sendG1000PfdPageKnobDec =  765,
+    sendG1000PfdSoftkey1 =  766,
+    sendG1000PfdSoftkey2 =  767,
+    sendG1000PfdSoftkey3 =  768,
+    sendG1000PfdSoftkey4 =  769,
+    sendG1000PfdSoftkey5 =  770,
+    sendG1000PfdSoftkey6 =  771,
+    sendG1000PfdSoftkey7 =  772,
+    sendG1000PfdSoftkey8 =  773,
+    sendG1000PfdSoftkey9 =  774,
+    sendG1000PfdSoftkey10 =  775,
+    sendG1000PfdSoftkey11 =  776,
+    sendG1000PfdSoftkey12 =  777,
+    sendG1000MfdFlightPlanButton =  778,
+    sendG1000MfdProcedureButton =  779,
+    sendG1000MfdZoominButton =  780,
+    sendG1000MfdZoomoutButton =  781,
+    sendG1000MfdDirectToButton =  782,
+    sendG1000MfdMenuButton =  783,
+    sendG1000MfdClearButton =  784,
+    sendG1000MfdEnterButton =  785,
+    sendG1000MfdCursorButton =  786,
+    sendG1000MfdGroupKnobInc =  787,
+    sendG1000MfdGroupKnobDec =  788,
+    sendG1000MfdPageKnobInc =  789,
+    sendG1000MfdPageKnobDec =  790,
+    sendG1000MfdSoftkey1 =  791,
+    sendG1000MfdSoftkey2 =  792,
+    sendG1000MfdSoftkey3 =  793,
+    sendG1000MfdSoftkey4 =  794,
+    sendG1000MfdSoftkey5 =  795,
+    sendG1000MfdSoftkey6 =  796,
+    sendG1000MfdSoftkey7 =  797,
+    sendG1000MfdSoftkey8 =  798,
+    sendG1000MfdSoftkey9 =  799,
+    sendG1000MfdSoftkey10 =  800,
+    sendG1000MfdSoftkey11 =  801,
+    sendG1000MfdSoftkey12 =  802,
+    sendApMaxBankInc =  803,
+    sendApMaxBankDec =  804,
+    sendGyroDriftInc =  805,
+    sendGyroDriftDec =  806,
+    sendTrueAirspeedCalInc =  807,
+    sendTrueAirspeedCalDec =  808,
+    sendDecreaseDecisionHeight =  809,
+    sendIncreaseDecisionHeight =  810,
+
+    sendG3000HorizontalBottomKnobPush = 811,
+    sendG3000HorizontalBottomKnobSmallDec = 812,
+    sendG3000HorizontalBottomKnowSmallInc = 813,
+    sendG3000HorizontalSoftkey1 = 814,
+    sendG3000HorizontalSoftkey2 = 815,
+    sendG3000HorizontalSoftkey3 = 816,
+    sendG3000HorizontalTopKnobLargeDec = 817,
+    sendG3000HorizontalTopKnobLargeInc = 818,
+    sendG3000HorizontalTopKnobPush = 819,
+    sendG3000HorizontalTopKnobPushLong = 820,
+    sendG3000HorizontalTopKnobSmallDec = 821,
+    sendG3000HorizontalTopKnobSmallInc = 822,
+    sendG3000PFD1Softkey1 = 823,
+    sendG3000PFD1Softkey2 = 824,
+    sendG3000PFD1Softkey3 = 825,
+    sendG3000PFD1Softkey4 = 826,
+    sendG3000PFD1Softkey5 = 827,
+    sendG3000PFD1Softkey6 = 828,
+    sendG3000PFD1Softkey7 = 829,
+    sendG3000PFD1Softkey8 = 830,
+    sendG3000PFD1Softkey9 = 831,
+    sendG3000PFD1Softkey10 = 832,
+    sendG3000PFD1Softkey11 = 833,
+    sendG3000PFD1Softkey12 = 834,
+
+    sendG3000PFD2Softkey1 = 835,
+    sendG3000PFD2Softkey2 = 836,
+    sendG3000PFD2Softkey3 = 837,
+    sendG3000PFD2Softkey4 = 838,
+    sendG3000PFD2Softkey5 = 839,
+    sendG3000PFD2Softkey6 = 840,
+    sendG3000PFD2Softkey7 = 841,
+    sendG3000PFD2Softkey8 = 842,
+    sendG3000PFD2Softkey9 = 843,
+    sendG3000PFD2Softkey10 = 844,
+    sendG3000PFD2Softkey11 = 845,
+    sendG3000PFD2Softkey12 = 846,
+
+    sendG3000PFD3Softkey1 = 847,
+    sendG3000PFD3Softkey2 = 848,
+    sendG3000PFD3Softkey3 = 849,
+    sendG3000PFD3Softkey4 = 850,
+    sendG3000PFD3Softkey5 = 851,
+    sendG3000PFD3Softkey6 = 852,
+    sendG3000PFD3Softkey7 = 853,
+    sendG3000PFD3Softkey8 = 854,
+    sendG3000PFD3Softkey9 = 855,
+    sendG3000PFD3Softkey10 = 856,
+    sendG3000PFD3Softkey11 = 857,
+    sendG3000PFD3Softkey12 = 858,
+
+    sendG3000MFDSoftkey1 = 859,
+    sendG3000MFDSoftkey2 = 860,
+    sendG3000MFDSoftkey3 = 861,
+    sendG3000MFDSoftkey4 = 862,
+    sendG3000MFDSoftkey5 = 863,
+    sendG3000MFDSoftkey6 = 864,
+    sendG3000MFDSoftkey7 = 865,
+    sendG3000MFDSoftkey8 = 866,
+    sendG3000MFDSoftkey9 = 867,
+    sendG3000MFDSoftkey10 = 868,
+    sendG3000MFDSoftkey11 = 869,
+    sendG3000MFDSoftkey12 = 870,
+
+    sendG3000PFDSoftkey1 = 871,
+    sendG3000PFDSoftkey2 = 872,
+    sendG3000PFDSoftkey3 = 873,
+    sendG3000PFDSoftkey4 = 874,
+    sendG3000PFDSoftkey5 = 875,
+    sendG3000PFDSoftkey6 = 876,
+    sendG3000PFDSoftkey7 = 877,
+    sendG3000PFDSoftkey8 = 878,
+    sendG3000PFDSoftkey9 = 879,
+    sendG3000PFDSoftkey10 = 880,
+    sendG3000PFDSoftkey11 = 881,
+    sendG3000PFDSoftkey12 = 882,
+
+    sendG3000PFDBottomKnobLargeDec = 883,
+    sendG3000PFDBottomKnobLargeInc = 884,
+    sendG3000PFDBottomKnobPush = 885,
+    sendG3000PFDBottomKnobPushLong = 886,
+    sendG3000PFDBottomKnobSmallDec = 887,
+    sendG3000PFDBottomKnobSmallInc = 888,
+
+    sendG3000PFDTopKnobLargeDec = 889,
+    sendG3000PFDTopKnobLargeInc = 890,
+    sendG3000PFDTopKnobSmallDec = 891,
+    sendG3000PFDTopKnobSmallInc = 892,
+
+    sendG3000VerticalBottomKnobLargeDec = 893,
+    sendG3000VerticalBottomKnobLargeInc = 894,
+    sendG3000VerticalBottomKnobPush = 895,
+    sendG3000VerticalBottomKnobPushLong = 896,
+    sendG3000VerticalBottomKnobSmallDec = 897,
+    sendG3000VerticalBottomKnobSmallInc = 898,
+    sendG3000VerticalTopKnobLargeDec = 899,
+    sendG3000VerticalTopKnobLargeInc = 903,
+    sendG3000VerticalTopKnobSmallDec = 904,
+    sendG3000VerticalTopKnobSmallInc = 905,
+    sendMasterWarning = 906,
+    sendMasterCaution = 907,
+    sendSimPause = 908
+};
 
 // library interface description
 class BitsAndDroidsFlightConnector {
   // user-accessible "public" interface
  public:
-  BitsAndDroidsFlightConnector(bool isLeonardoMicro);
-  BitsAndDroidsFlightConnector(bool isLeonardoMicro, HardwareSerial* serial);
+    BitsAndDroidsFlightConnector();
+    BitsAndDroidsFlightConnector(HardwareSerial* serial);
   #ifndef ARDUINO_SAM_DUE
-  BitsAndDroidsFlightConnector(bool isLeonardoMicro, SoftwareSerial* serial);
+    BitsAndDroidsFlightConnector(SoftwareSerial* serial);
   #else
-  BitsAndDroidsFlightConnector(bool isLeonardoMicro, Serial_* serial);
+    BitsAndDroidsFlightConnector(Serial_* serial);
   #endif
 
+  void send(int command);
   void switchHandling();
   void dataHandling();
   void simpleInputHandling(int throttlePin);
@@ -30,7 +655,7 @@ class BitsAndDroidsFlightConnector {
   void setPotFlaps(byte flapsPin);
   void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
   void sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal);
-  void sendSetPot(byte rudderPin,int minVal, int maxVal);
+  void sendSetRudderPot(byte potPin);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal, bool reversed);
@@ -221,549 +846,13 @@ int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
   // data These functions are mainly implemented to improve readability of your
   // code
   // AP
-  int sendApMasterOn();
-  int sendApPanelHeadingLock();
-  int sendAPPanelAltitudeHold();
-  int sendAPAttitudeHoldOn();
-  int sendAPLocHoldOn();
-  int sendAPAprHoldOn();
-  int sendAPHeadingHoldOn();
-  int sendAltitudeHoldOn();
-  int sendApWingLevelerOn();
-  int sendBCHoldOn();
-  int sendAPNav1HoldOn();
-  int sendAPAttitudeHoldOff();
-  int sendAPLocHoldOff();
-  int sendAprHoldOff();
-  int sendAPHeadingHoldOff();
-  int sendAPAltitudeHoldOff();
-  int sendWingLevelerOff();
-  int sendAPBCHoldOff();
-  int sendAPNav1HoldOff();
-  int sendAPAirspeedHold();
-  int sendAPPanelSpeedHold();
-  int sendAPAltitudeInc();
-  int sendAPAltitudeDec();
-  int sendAPVSInc();
-  int sendAPVSDec();
-  int sendAPSpeedInc();
-  int sendAPSpeedDec();
-  int sendAPPanelMachHold();
-  int sendAPMachInc();
-  int sendAPMachDec();
-  int sendAPMachHold();
-  int sendAPAltitudeSetMetric();
-  int sendAPVSSetEnglish();
-  int sendAPSpeedSet();
-  int sendAPMachVarSet();
-  int sendAPAirspeedOn();
-  int sendAPAirspeedOff();
-  int sendAPAirspeedSet();
-  int sendAPMachOn();
-  int sendAPMachOff();
-  int sendAPMachSet();
-  int sendAPPanelAltitudeOn();
-  int sendAPPanelAltitudeOff();
-  int sendAPPanelAltitudeSet();
-  int sendAPPanelHeadingOn();
-  int sendAPPanelHeadingOff();
-  int sendAPPanelHeadingSet();
-  int sendAPPanelMachOn();
-  int sendAPPanelMachOff();
-  int sendAPPanelMachSet();
-  int sendAPPanelSpeedOn();
-  int sendAPPanelSpeedOff();
-  int sendAPPanelSpeedSet();
-  int sendAPPanelAltVarSetEnglish();
-  int sendAPVSVarSetMetric();
-  int sendAPPanelSpeedHoldToggle();
-  int sendAPPanelMachHoldToggle();
-  int sendAPNavSelectSet();
-  int sendAPPitchRefIncUp();
-  int sendAPPitchRefIncDown();
-  int sendAPPitchRefSelect();
-  int sendAPAttitudeHold();
-  int sendAPLocHold();
-  int sendAPAprHold();
-  int sendAPHeadingHold();
-  int sendAPAltitudeHold();
-  int sendAPWingLeveler();
-  int sendAPBCHold();
-  int sendAPNav1Hold();
-  int sendHeadingBugInc();
-  int sendHeadingBugDec();
-  int sendAPFlightDirector();
-  int sendAPVSHold();
 
-  int sendKohlsmanInc();
-  int sendKohlsmanDec();
-
-  //Flaps
-  int sendFlapsUp();
-  int sendFlaps1();
-  int sendFlaps2();
-  int sendFlaps3();
-  int sendFlapsDown();
-  int sendFlapsInc();
-  int sendFlapsDec();
-
-  // Coms
-  String sendStandbyCom1Set(char*);
-  String sendStandbyCom2Set(char* value);
-
-  byte sendSwapCom1();
-  byte sendSwapCom2();
-
-  byte sendCom1FractInc();
-  byte sendCom1FractIncCarry();
-  byte sendCom1FractDecr();
-  byte sendCom1FractDecrCarry();
-
-  byte sendCom2FractInc();
-  byte sendCom2FractIncCarry();
-  byte sendCom2FractDecr();
-  byte sendCom2FractDecrCarry();
-
-  byte sendCom1WholeInc();
-  byte sendCom1WholeDec();
-  byte sendCom2WholeInc();
-  byte sendCom2WholeDec();
-
-
-  // Nav
-  byte sendMhzNavStandby1Plus();
-  byte sendMhzNavStandby1Min();
-  byte sendKhzNavStandby1Plus();
-  byte sendKhzNavStandby1Min();
-
-  byte sendMhzNavStandby2Plus();
-  byte sendMhzNavStandby2Min();
-  byte sendKhzNavStandby2Plus();
-  byte sendKhzNavStandby2Min();
-
-  byte sendIncWholeNav1();
-  byte sendDecWholeNav1();
-
-  byte sendIncWholeNav2();
-  byte sendDecWholeNav2();
-
-  byte sendIncFractNav1();
-  byte sendDecFractNav1();
-
-  byte sendIncFractNav2();
-  byte sendDecFractNav2();
-
-  byte sendSwapNav1();
-  byte sendSwapNav2();
-
-  //DME
-
-  byte sendSelectedDme1IdentEnable();
-  byte sendSeletedDme1IdentDisable ();
-  byte sendSelectedDme1IdentSet ();
-  byte sendSelectedDme1IdentToggle ();
-  byte sendSelectedDme2IdentEnable ();
-  byte sendSelectedDme2IdentDisable();
-  byte sendSelectedDme2IdentSet();
-  byte sendSelectedDme2IdentToggle();
-  byte sendDmeToggle();
-
-  //VOR
-
-  byte sendSelectedVor1IdentEnable();
-  byte sendSelectedVor1IdentDisable();
-  byte sendSelectedVor1IdentSet();
-  byte sendVor1IdentToggle();
-  byte sendVor2IdentEnable();
-  byte sendVor2IdentDisable();
-  byte sendVor2IdentSet();
-  byte sendVor2IdentToggle();
-  byte sendVorToggle();
-  byte sendVor1ObiDec();
-  byte sendVor1ObiInc();
-  byte sendVor2ObiDec();
-  byte sendVor2ObiInc();
-
-  //ADF
-
-  byte sendSelectedAdfIdentEnable();
-  byte sendSelectedAdfIdentDisable();
-  byte sendSelecetedAdfIdentSet();
-  byte sendSelectedAdfIdentToggle();
-  byte sendAdfCardIn();
-  byte sendAdfCardDec();
-  byte sendAdfCardSet();
-  byte sendAdf100Inc();
-  byte sendAdf10Inc();
-  byte sendAdf1Inc();
-  byte sendAdf100Dec();
-  byte sendAdf10Dec();
-  byte sendAdf1Dec();
-  byte sendAdfCompleteSet();
-  byte sendAdf1WholeInc();
-  byte sendAdf1WholeDec();
-  byte sendAdf2100Inc();
-  byte sendAdf210Inc();
-  byte sendAdf21Inc();
-  byte sendAdf2RadioThenthsInc();
-  byte sendAdf2100Dec();
-  byte sendAdf210Dec();
-  byte sendAdf21Dec();
-  byte sendAdf2RadioThenthsDec();
-  byte sendAdf2WholeInc();
-  byte sendAdf2WholeDec();
-  byte sendAdf2FractDecCarry();
-  byte sendAdf2FractIncCarry();
-  byte sendAdf2CompleteSet();
-  byte sendAdf2IdentDisable();
-  byte sendAdf2IdentEnable();
-  byte sendAdf2IdentToggle();
-  byte sendAdf2IdentSet();
-  byte sendAdfCardInc();
-
-  //XPNDR
-  byte sendXpndr1000Inc();
-  byte sendXpndr100Inc();
-  byte sendXpndr10Inc();
-  byte sendXpndr1Inc();
-  byte sendXpndr1000Dec();
-  byte sendXpndr100Dec();
-  byte sendXpndr10Dec();
-  byte sendXpndr1Dec();
-  String sendXpndrSet(char*);
-
-  //Avionics
-  int sendAvionicsMaster1On();
-  int sendAvionicsMaster1Off();
-  int sendAvionicsMaster2On();
-  int sendAvionicsMaster2Off();
-  int sendParkingBrake();
-
-  //Battery
-  int sendToggleMasterBattery1 ();
-  int sendToggleMasterBattery2();
-  int sendToggleExternalPower();
-
-  int sendToggleMasterAlternator();
-
-
-
-
-
-  // G1000
-  byte sendG1000ZoomMapIn();
-  byte sendG1000ZoomMapOut();
-
-  int sendPitotHeatToggle(){return 508;};
-  int sendPitotHeatOn(){return 509;};
-  int sendPitotHeatOff(){return 510;};
-  int sendMagneto(){return 511;};
-  int sendMagnetoDecr(){return 512;};
-  int sendMagnetoIncr(){return 513;};
-  int sendMagneto1Off(){return 514;};
-  int sendMagneto1Right(){return 515;};
-  int sendMagneto1Left(){return 516;};
-  int sendMagneto1Both(){return 517;};
-  int sendMagneto1Start(){return 518;};
-  int sendMagneto2Off(){return 519;};
-  int sendMagneto2Right(){return 520;};
-  int sendMagneto2Left(){return 521;};
-  int sendMagneto2Both(){return 522;};
-  int sendMagneto2Start(){return 523;};
-  int sendMagneto3Off(){return 524;};
-  int sendMagneto3Right(){return 525;};
-  int sendMagneto3Left(){return 526;};
-  int sendMagneto3Both(){return 527;};
-  int sendMagneto3Start(){return 528;};
-  int sendMagneto4Off(){return 529;};
-  int sendMagneto4Right(){return 530;};
-  int sendMagneto4Left(){return 531;};
-  int sendMagneto4Both(){return 532;};
-  int sendMagneto4Start(){return 533;};
-  int sendMagnetoOff(){return 534;};
-  int sendMagnetoRight(){return 535;};
-  int sendMagnetoLeft(){return 536;};
-  int sendMagnetoBoth(){return 537;};
-  int sendMagnetoStart(){return 538;};
-  int sendMagneto1Decr(){return 539;};
-  int sendMagneto1Incr(){return 540;};
-  int sendMagneto2Decr(){return 541;};
-  int sendMagneto2Incr(){return 542;};
-  int sendMagneto3Decr(){return 543;};
-  int sendMagneto3Incr(){return 544;};
-  int sendMagneto4Decr(){return 545;};
-  int sendMagneto4Incr(){return 546;};
-  int sendMagnetoSet(){return 547;};
-  int sendMagneto1Set(){return 548;};
-  int sendMagneto2Set(){return 549;};
-  int sendMagneto3Set(){return 550;};
-  int sendMagneto4Set(){return 551;};
-  int sendAntiIceOn(){return 552;};
-  int sendAntiIceOff(){return 553;};
-  int sendAntiIceSet(){return 554;};
-  int sendAntiIceToggle(){return 555;};
-  int sendAntiIceToggleEng1(){return 556;};
-  int sendAntiIceToggleEng2(){return 557;};
-  int sendAntiIceToggleEng3(){return 558;};
-  int sendAntiIceToggleEng4(){return 559;};
-  int sendAntiIceSetEng1(){return 560;};
-  int sendAntiIceSetEng2(){return 561;};
-  int sendAntiIceSetEng3(){return 562;};
-  int sendAntiIceSetEng4(){return 563;};
-  int sendToggleFuelValveAll(){return 564;};
-  int sendToggleFuelValveEng1(){return 565;};
-  int sendToggleFuelValveEng2(){return 566;};
-  int sendToggleFuelValveEng3(){return 567;};
-  int sendToggleFuelValveEng4(){return 568;};
-  int sendFuelSelectorOff(){return 569;};
-  int sendFuelSelectorAll(){return 570;};
-  int sendFuelSelectorLeft(){return 571;};
-  int sendFuelSelectorRight(){return 572;};
-  int sendFuelSelectorLeftAux(){return 573;};
-  int sendFuelSelectorRightAux(){return 574;};
-  int sendFuelSelectorCenter(){return 575;};
-  int sendFuelSelectorSet(){return 576;};
-  int sendFuelSelector2Off(){return 577;};
-  int sendFuelSelector2All(){return 578;};
-  int sendFuelSelector2Left(){return 579;};
-  int sendFuelSelector2Right(){return 580;};
-  int sendFuelSelector2LeftAux(){return 581;};
-  int sendFuelSelector2RightAux(){return 582;};
-  int sendFuelSelector2Center(){return 583;};
-  int sendFuelSelector2Set(){return 584;};
-  int sendFuelSelector3Off(){return 585;};
-  int sendFuelSelector3All(){return 586;};
-  int sendFuelSelector3Left(){return 587;};
-  int sendFuelSelector3Right(){return 588;};
-  int sendFuelSelector3LeftAux(){return 589;};
-  int sendFuelSelector3RightAux(){return 590;};
-  int sendFuelSelector3Center(){return 591;};
-  int sendFuelSelector3Set(){return 592;};
-  int sendFuelSelector4Off(){return 593;};
-  int sendFuelSelector4All(){return 594;};
-  int sendFuelSelector4Left(){return 595;};
-  int sendFuelSelector4Right(){return 596;};
-  int sendFuelSelector4LeftAux(){return 597;};
-  int sendFuelSelector4RightAux(){return 598;};
-  int sendFuelSelector4Center(){return 599;};
-  int sendFuelSelector4Set(){return 600;};
-  int sendCrossFeedOpen(){return 601;};
-  int sendCrossFeedToggle(){return 602;};
-  int sendCrossFeedOff(){return 603;};
-  int sendElevTrimDn(){return 604;};
-  int sendDown(){return 605;};
-  int sendElevTrimUp(){return 606;};
-  int sendElevUp(){return 607;};
-  int sendSpoilersArmToggle(){return 608;};
-  int sendSpoilersOn(){return 609;};
-  int sendSpoilersOff(){return 610;};
-  int sendSpoilersArmOn(){return 611;};
-  int sendSpoilersArmOff(){return 612;};
-  int sendAileronTrimLeft(){return 613;};
-  int sendAileronTrimRight(){return 614;};
-  int sendRudderTrimLeft(){return 615;};
-  int sendRudderTrimRight(){return 616;};
-  int sendCowFlap1Set(){return 617;};
-  int sendCowlFlap2Set(){return 618;};
-  int sendCowlFlap3Set(){return 619;};
-  int sendCowlFlap4Set(){return 620;};
-  int sendIncCowlFlaps(){return 621;};
-  int sendDecCowlFlaps(){return 622;};
-  int sendIncCowlFlaps1(){return 623;};
-  int sendDecCowlFlaps1(){return 624;};
-  int sendIncCowlFlaps2(){return 625;};
-  int sendDecCowlFlaps2(){return 626;};
-  int sendIncCowlFlaps3(){return 627;};
-  int sendDecCowlFlaps3(){return 628;};
-  int sendIncCowlFlaps4(){return 629;};
-  int sendDecCowlFlaps4(){return 630;};
-  int sendFuelPump(){return 631;};
-  int sendToggleElectFuelPump(){return 632;};
-  int sendToggleElectFuelPump1(){return 633;};
-  int sendToggleElectFuelPump2(){return 634;};
-  int sendToggleElectFuelPump3(){return 635;};
-  int sendToggleElectFuelPump4(){return 636;};
-  int sendEnginePrimer(){return 637;};
-  int sendToggleEnginePrimer(){return 638;};
-  int sendTogglePrimer1(){return 639;};
-  int sendTogglePrimer2(){return 640;};
-  int sendTogglePrimer3(){return 641;};
-  int sendTogglePrimer4(){return 642;};
-  int sendToggleFeatherSwitches(){return 643;};
-  int sendToggleFeatherSwitch1(){return 644;};
-  int sendToggleFeatherSwitch2(){return 645;};
-  int sendToggleFeatherSwitch3(){return 646;};
-  int sendToggleFeatherSwitch4(){return 647;};
-  int sendTogglePropellerSync(){return 648;};
-  int sendToggleAutoFeatherArm(){return 649;};
-  int sendToggleAfterburner(){return 650;};
-  int sendToggleAfterburner1(){return 651;};
-  int sendToggleAfterburner2(){return 652;};
-  int sendToggleAfterburner3(){return 653;};
-  int sendToggleAfterburner4(){return 654;};
-  int sendEngine(){return 655;};
-  int sendSpoilersToggle(){return 656;};
-  int sendToggleStarter1(){return 657;};
-  int sendToggleStarter2(){return 658;};
-  int sendToggleStarter3(){return 659;};
-  int sendToggleStarter4(){return 660;};
-  int sendToggleAllStarters(){return 661;};
-  int sendEngineAutoStart(){return 662;};
-  int sendEngineAutoShutdown(){return 663;};
-  int sendFuelSelectorLeftMain(){return 664;};
-  int sendFuelSelector2LeftMain(){return 665;};
-  int sendFuelSelector3LeftMain(){return 666;};
-  int sendFuelSelector4LeftMain(){return 667;};
-  int sendFuelSelectorRightMain(){return 668;};
-  int sendFuelSelector2RightMain(){return 669;};
-  int sendFuelSelector3RightMain(){return 670;};
-  int sendFuelSelector4RightMain(){return 671;};
-  int sendApuStarter(){return 672;};
-  int sendApuOffSwitch(){return 673;};
-  int sendApuGeneratorSwitchToggle(){return 674;};
-  int sendCabinNoSmokingAlertSwitchToggle(){return 675;};
-  int sendCabinSeatbeltsAlertSwitchToggle(){return 676;};
-
-  int sendStrobesToggle(){return 677;};
-  int sendAllLightsToggle(){return 678;};
-  int sendPanelLightsToggle(){return 679;};
-  int sendLandingLightsToggle(){return 680;};
-  int sendLandingLightUp(){return 681;};
-  int sendLandingLightDown(){return 682;};
-  int sendLandingLightLeft(){return 683;};
-  int sendLandingLightRight(){return 684;};
-  int sendLandingLightHome(){return 685;};
-  int sendStrobesOn(){return 686;};
-  int sendStrobesOff(){return 687;};
-  int sendPanelLightsOn(){return 688;};
-  int sendPanelLightsOff(){return 689;};
-  int sendLandingLightsOn(){return 690;};
-  int sendLandingLightsOff(){return 691;};
-  int sendToggleBeaconLights(){return 692;};
-  int sendToggleTaxiLights(){return 693;};
-  int sendToggleLogoLights(){return 694;};
-  int sendToggleRecognitionLights(){return 695;};
-  int sendToggleWingLights(){return 696;};
-  int sendToggleNavLights(){return 697;};
-  int sendToggleCabinLights(){return 698;};
-  int sendGearUp(){return 699;};
-  int sendGearDown(){return 700;};
-  int sendToggleStructuralDeice(){return 701;};
-  int sendTogglePropellerDeice(){return 702;};
-  int sendToggleAlternator1(){return 703;};
-  int sendToggleAlternator2(){return 704;};
-  int sendToggleAlternator3(){return 705;};
-  int sendToggleAlternator4(){return 706;};
-  int sendAtc(){return 707;};
-  int sendATCMenu1(){return 708;};
-  int sendATCMenu2(){return 709;};
-  int sendATCMenu3(){return 710;};
-  int sendATCMenu4(){return 711;};
-  int sendATCMenu5(){return 712;};
-  int sendATCMenu6(){return 713;};
-  int sendATCMenu7(){return 714;};
-  int sendATCMenu8(){return 715;};
-  int sendATCMenu9(){return 716;};
-  int sendATCMenu0(){return 717;};
-  int sendEGT1Inc(){return 718;};
-  int sendEGT1Dec(){return 719;};
-  int sendEGT2Inc(){return 720;};
-  int sendEGT2Dec(){return 721;};
-  int sendEGT3Inc(){return 722;};
-  int sendEGT3Dec(){return 723;};
-  int sendEGT4Inc(){return 724;};
-  int sendEGT4Dec(){return 725;};
-  int sendEGTInc(){return 726;};
-  int sendEGTDec(){return 727;};
-  int sendToggleGPSDrivesNav1(){return 728;};
-  int sendGPSPowerButton(){return 729;};
-  int sendGPSNearestButton(){return 730;};
-  int sendGPSObsButton(){return 731;};
-  int sendGPSMsgButton(){return 732;};
-  int sendGPSMsgButtonDown(){return 733;};
-  int sendGPSMsgButtonUp(){return 734;};
-  int sendGPSFlightplanButton(){return 735;};
-  int sendGPSTerrainButton(){return 736;};
-  int sendGPSProcedureButton(){return 737;};
-  int sendGPSZoominButton(){return 738;};
-  int sendGPSZoomoutButton(){return 739;};
-  int sendGPSDirectToButton(){return 740;};
-  int sendGPSMenuButton(){return 741;};
-  int sendGPSClearButton(){return 742;};
-  int sendGPSClearAllButton(){return 743;};
-  int sendGPSClearButtonDown(){return 744;};
-  int sendGPSClearButtonUp(){return 745;};
-  int sendGPSEnterButton(){return 746;};
-  int sendGPSCursorButton(){return 747;};
-  int sendGPSGroupKnobInc(){return 748;};
-  int sendGPSGroupKnobDec(){return 749;};
-  int sendGPSPageKnobInc(){return 750;};
-  int sendGPSPageKnobDec(){return 751;};
-  int sendYawDamperToggle(){return 752;};
-  int sendG1000PfdFlightplanButton(){return 753;};
-  int sendG1000PfdProcedureButton(){return 754;};
-  int sendG1000PfdZoominButton(){return 755;};
-  int sendG1000PfdZoomoutButton(){return 756;};
-  int sendG1000PfdDirectToButton(){return 757;};
-  int sendG1000PfdMenuButton(){return 758;};
-  int sendG1000PfdClearButton(){return 759;};
-  int sendG1000PfdEnterButton(){return 760;};
-  int sendG1000PfdCursorButton(){return 761;};
-  int sendG1000PfdGroupKnobInc(){return 762;};
-  int sendG1000PfdGroupKnobDec(){return 763;};
-  int sendG1000PfdPageKnobInc(){return 764;};
-  int sendG1000PfdPageKnobDec(){return 765;};
-  int sendG1000PfdSoftkey1(){return 766;};
-  int sendG1000PfdSoftkey2(){return 767;};
-  int sendG1000PfdSoftkey3(){return 768;};
-  int sendG1000PfdSoftkey4(){return 769;};
-  int sendG1000PfdSoftkey5(){return 770;};
-  int sendG1000PfdSoftkey6(){return 771;};
-  int sendG1000PfdSoftkey7(){return 772;};
-  int sendG1000PfdSoftkey8(){return 773;};
-  int sendG1000PfdSoftkey9(){return 774;};
-  int sendG1000PfdSoftkey10(){return 775;};
-  int sendG1000PfdSoftkey11(){return 776;};
-  int sendG1000PfdSoftkey12(){return 777;};
-  int sendG1000MfdFlightPlanButton(){return 778;};
-  int sendG1000MfdProcedureButton(){return 779;};
-  int sendG1000MfdZoominButton(){return 780;};
-  int sendG1000MfdZoomoutButton(){return 781;};
-  int sendG1000MfdDirectToButton(){return 782;};
-  int sendG1000MfdMenuButton(){return 783;};
-  int sendG1000MfdClearButton(){return 784;};
-  int sendG1000MfdEnterButton(){return 785;};
-  int sendG1000MfdCursorButton(){return 786;};
-  int sendG1000MfdGroupKnobInc(){return 787;};
-  int sendG1000MfdGroupKnobDec(){return 788;};
-  int sendG1000MfdPageKnobInc(){return 789;};
-  int sendG1000MfdPageKnobDec(){return 790;};
-  int sendG1000MfdSoftkey1(){return 791;};
-  int sendG1000MfdSoftkey2(){return 792;};
-  int sendG1000MfdSoftkey3(){return 793;};
-  int sendG1000MfdSoftkey4(){return 794;};
-  int sendG1000MfdSoftkey5(){return 795;};
-  int sendG1000MfdSoftkey6(){return 796;};
-  int sendG1000MfdSoftkey7(){return 797;};
-  int sendG1000MfdSoftkey8(){return 798;};
-  int sendG1000MfdSoftkey9(){return 799;};
-  int sendG1000MfdSoftkey10(){return 800;};
-  int sendG1000MfdSoftkey11(){return 801;};
-  int sendG1000MfdSoftkey12(){return 802;};
-  int sendApMaxBankInc(){return 803;};
-  int sendApMaxBankDec(){return 804;};
-  int sendGyroDriftInc(){return 805;};
-  int sendGyroDriftDec(){return 806;};
-  int sendTrueAirspeedCalInc(){return 807;};
-  int sendTrueAirspeedCalDec(){return 808;};
-  int sendDecreaseDecisionHeight(){return 809;};
-  int sendIncreaseDecisionHeight(){return 810;};
 
 
   // library-accessible "private" interface
 
   int smoothPot(byte potPin);
-  void sendSetRudderPot(byte potPin, int minVal, int maxVal);
+
 private:
   //--------------------------------------------
   // TRANSMIT DATA
@@ -772,216 +861,8 @@ private:
 
   Stream* serial;
 
-  // Avionics
-  int valSendAvionicsMaster1On = 401;
-  int valSendAvionicsMaster1Off = 402;
-  int valSendAvionicsMaster2On = 403;
-  int valSendAvionicsMaster2Off = 404;
-  int valSendParkingBrake = 420;
-  byte valSendMixtureInput(){return 115;}
-  //Battery
-  int valSendToggleMasterBattery1 = 405;
-  int valSendToggleMasterBattery2= 406;
-  int valSendToggleExternalPower = 408;
-
-  int valSendToggleMasterAlternator = 407;
 
 
-  //Xpndr
-  byte valSendXpndr1000Inc = 171;
-  byte valSendXpndr100Inc = 172;
-  byte valSendXpndr10Inc = 173;
-  byte valSendXpndr1Inc = 174;
-  byte valSendXpndr1000Dec = 175;
-  byte valSendXpndr100Dec = 176;
-  byte valSendXpndr10Dec = 177;
-  byte valSendXpndr1Dec = 178;
-  //String valSendXpndrSet = "202";
-
-  //Adf
-  byte valSendSelectedAdfIdentEnable = 158;
-  byte valSendSelectedAdfIdentDisable = 159;
-  byte valSendSelecetedAdfIdentSet = 160;
-  byte valSendSelectedAdfIdentToggle = 161;
-  byte valSendAdfCardInc = 162;
-  byte valSendAdfCardDec = 163;
-  byte valSendAdfCardSet = 164;
-  byte valSendAdf100Inc = 165;
-  byte valSendAdf10Inc = 166;
-  byte valSendAdf1Inc = 167;
-  byte valSendAdf100Dec = 168;
-  byte valSendAdf10Dec = 169;
-  byte valSendAdf1Dec = 170;
-  byte valSendAdfCompleteSet = 179;
-  byte valSendAdf1WholeInc = 180;
-  byte valSendAdf1WholeDec = 181;
-  byte valSendAdf2100Inc = 182;
-  byte valSendAdf210Inc = 183;
-  byte valSendAdf21Inc = 184;
-  byte valSendAdf2RadioThenthsInc = 185;
-  byte valSendAdf2100Dec = 186;
-  byte valSendAdf210Dec = 187;
-  byte valSendAdf21Dec = 188;
-  byte valSendAdf2RadioThenthsDec= 189;
-  byte valSendAdf2WholeInc = 190;
-  byte valSendAdf2WholeDec = 191;
-  byte valSendAdf2FractDecCarry = 192;
-  byte valSendAdf2FractIncCarry = 193;
-  byte valSendAdf2CompleteSet = 194;
-  byte valSendAdf2IdentDisable = 195;
-  byte valSendAdf2IdentEnable = 196;
-  byte valSendAdf2IdentToggle = 197;
-  byte valSendAdf2IdentSet = 200;
-
-  //VOR
-  byte valSendSelectedVor1IdentEnable = 145;
-  byte valSendSelectedVor1IdentDisable = 146;
-  byte valSendSelectedVor1IdentSet = 147;
-  byte valSendVor1IdentToggle = 148;
-  byte valSendVor2IdentEnable = 149;
-  byte valSendVor2IdentDisable = 150;
-  byte valSendVor2IdentSet = 151;
-  byte valSendVor2IdentToggle = 152;
-  byte valSendVorToggle = 153;
-  byte valSendVor1ObiDec = 154;
-  byte valSendVor1ObiInc = 155;
-  byte valSendVor2ObiDec = 156;
-  byte valSendVor2ObiInc = 157;
-
-  //DME
-  byte valSendSelectedDme1IdentEnable = 136;
-  byte valSendSeletedDme1IdentDisable = 137;
-  byte valSendSelectedDme1IdentSet = 138;
-  byte valSendSelectedDme1IdentToggle = 139;
-  byte valSendSelectedDme2IdentEnable = 140;
-  byte valSendSelectedDme2IdentDisable = 141;
-  byte valSendSelectedDme2IdentSet = 142;
-  byte valSendSelectedDme2IdentToggle = 143;
-  byte valSendDmeToggle = 144;
-
-
-  // AP
-  int valSendApMasterOn = 301;
-  int valSendApPanelHeadingLock = 302;
-  int valSendAPPanelAltitudeHold = 303;
-  int valSendAPAttitudeHoldOn = 304;
-  int valSendAPLocHoldOn = 305;
-  int valSendAPAprHoldOn = 306;
-  int valSendAPHeadingHoldOn = 307;
-  int valSendAltitudeHoldOn = 308;
-  int valSendApWingLevelerOn = 309;
-  int valSendBCHoldOn = 310;
-  int valSendAPNav1HoldOn = 311;
-  int valSendAPAttitudeHoldOff = 312;
-  int valSendAPLocHoldOff = 313;
-  int valSendAprHoldOff = 314;
-  int valSendAPHeadingHoldOff = 315;
-  int valSendAPAltitudeHoldOff = 316;
-  int valSendWingLevelerOff = 317;
-  int valSendAPBCHoldOff = 318;
-  int valSendAPNav1HoldOff = 319;
-  int valSendAPAirspeedHold = 320;
-  int valSendAPPanelSpeedHold = 321;
-  int valSendAPAltitudeInc = 322;
-  int valSendAPAltitudeDec = 323;
-  int valSendAPVSInc = 324;
-  int valSendAPVSDec = 325;
-  int valSendAPSpeedInc = 326;
-  int valSendAPSpeedDec = 327;
-  int valSendAPPanelMachHold = 328;
-  int valSendAPMachInc = 329;
-  int valSendAPMachDec = 330;
-  int valSendAPMachHold = 331;
-  int valSendAPAltitudeSetMetric = 332;
-  int valSendAPVSSetEnglish = 333;
-  int valSendAPSpeedSet = 334;
-  int valSendAPMachVarSet = 335;
-  int valSendAPAirspeedOn = 336;
-  int valSendAPAirspeedOff = 337;
-  int valSendAPAirspeedSet = 338;
-  int valSendAPMachOn = 339;
-  int valSendAPMachOff = 340;
-  int valSendAPMachSet = 341;
-  int valSendAPPanelAltitudeOn = 342;
-  int valSendAPPanelAltitudeOff = 343;
-  int valSendAPPanelAltitudeSet = 345;
-  int valSendAPPanelHeadingOn = 346;
-  int valSendAPPanelHeadingOff = 347;
-  int valSendAPPanelHeadingSet = 348;
-  int valSendAPPanelMachOn = 349;
-  int valSendAPPanelMachOff = 350;
-  int valSendAPPanelMachSet = 351;
-  int valSendAPPanelSpeedOn = 352;
-  int valSendAPPanelSpeedOff = 353;
-  int valSendAPPanelSpeedSet = 354;
-  int valSendAPPanelAltVarSetEnglish = 355;
-  int valSendAPVSVarSetMetric = 356;
-  int valSendAPPanelSpeedHoldToggle = 357;
-  int valSendAPPanelMachHoldToggle = 358;
-  int valSendAPNavSelectSet = 359;
-  int valSendAPPitchRefIncUp = 360;
-  int valSendAPPitchRefIncDown = 361;
-  int valSendAPPitchRefSelect = 362;
-  int valSendAPAttitudeHold = 363;
-  int valSendAPLocHold = 364;
-  int valSendAPAprHold = 365;
-  int valSendAPHeadingHold = 366;
-  int valSendAPAltitudeHold = 367;
-  int valSendAPWingLeveler = 368;
-  int valSendAPBCHold = 369;
-  int valSendAPNav1Hold = 370;
-  int valSendHeadingBugInc = 371;
-  int valSendHeadingBugDec = 372;
-  int valSendAPFlightDirector = 373;
-  int valSendAPVSHold = 374;
-  int valSendKohlsmanInc = 375;
-  int valSendKohlsmanDec = 376;
-  int autoThrottleArm = 378;
-  int autoThrottleArmToGa = 379;
-
-
-  // Coms
-  String valSendStandbyCom1Set = "100";
-  String valSendStandbyCom2Set = "101";
-
-  byte valSendCom1FractInc = 125;
-  byte valSendCom1FractIncCarry = 127;
-  byte valSendCom1FractDecr = 124;
-  byte valSendCom1FractDecrCarry = 126;
-
-  byte valSendCom2FractInc = 121;
-  byte valSendCom2FractIncCarry = 123;
-  byte valSendCom2FractDecr = 120;
-  byte valSendCom2FractDecrCarry = 122;
-
-  byte valSendCom1WholeDec = 111;
-  byte valSendCom1WholeInc = 112;
-  byte valSendCom2WholeDec = 113;
-  byte valSendCom2WholeInc = 114;
-
-  byte valSendSwapCom1 = 116;
-  byte valSendSwapCom2 = 117;
-
-  // Xpndr
-  String valSendXpndrSet = "202";
-
-  // Nav
-  byte valSendIncWholeNav1 = 132;
-  byte valSendDecWholeNav1 = 133;
-  byte valSendIncWholeNav2 = 134;
-  byte valSendDecWholeNav2 = 135;
-
-  byte valSendIncFractNav1 = 128;
-  byte valSendDecFractNav1 = 129;
-  byte valSendIncFractNav2 = 130;
-  byte valSendDecFractNav2 = 131;
-
-  byte valSendSwapNav1 = 118;
-  byte valSendSwapNav2 = 119;
-
-  // G1000
-  byte valSendG1000ZoomMapIn = 250;
-  byte valSendG1000ZoomMapOut = 251;
 
 
 
@@ -1194,15 +1075,6 @@ byte fuelTankExternal2Level;
   int rudderTrimPct;
   int elevatorTrimPos;
   int elevatorTrimPct;
-
-  //Flaps
-  int valSendFlapsUp = 501;
-  int valSendFlaps1 = 502;
-  int valSendFlaps2 = 503;
-  int valSendFlaps3 = 504;
-  int valSendFlapsDown = 505;
-  int valSendFlapsInc = 506;
-  int valSendFlapsDec = 507;
 
   int fuelTankCenterCapacity;
   int fuelTankCenter2Capacity;
