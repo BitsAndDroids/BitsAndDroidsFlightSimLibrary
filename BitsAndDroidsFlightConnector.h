@@ -166,14 +166,14 @@ enum sendCommands {
     sendHeadingBugDec = 372,
     sendAPFlightDirector = 373,
     sendAPVSHold = 374,
-    sndKohlsmanInc = 375,
-    sndKohlsmanDec = 376,
+    sendKohlsmanInc = 375,
+    sendKohlsmanDec = 376,
     sendThrottleArm = 378,
     sendhrottleArmToGa = 379,
 
 
-    slSendStandbyCom1Set = 100,
-    slSendStandbyCom2Set = 101,
+    SendStandbyCom1Set = 100,
+    SendStandbyCom2Set = 101,
 
     sendCom1FractInc = 125,
     sendCom1FractIncCarry = 127,
@@ -626,7 +626,8 @@ enum sendCommands {
     sendG3000VerticalTopKnobSmallInc = 905,
     sendMasterWarning = 906,
     sendMasterCaution = 907,
-    sendSimPause = 908
+    sendSimPauseOn = 908,
+    sendSimPauseOff = 909
 };
 
 // library interface description
