@@ -41,6 +41,7 @@ const byte exampleButtonB = 5;
 
 void setup() {
   //115200 To match the default connector baud rate. can be altered but please do so as well in the conenctor
+  //FOR THIS TO WORK YOU NEED TO INSTALL THE BITSANDDROIDS WASM MODULE AS WELL
   Serial.begin(115200);
   pinMode(exampleButtonA, INPUT_PULLUP);
   pinMode(exampleButtonB, INPUT_PULLUP);
