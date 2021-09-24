@@ -539,11 +539,11 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
         case 958: {
-            adfActiveFreq2 = convertToNavFreq(cutValue);
+            adfActiveFreq2 = cutValue;
             break;
         }
         case 959: {
-            adfStandbyFreq2 = convertToNavFreq(cutValue);
+            adfStandbyFreq2 = cutValue;
             break;
         }
         case 960: {

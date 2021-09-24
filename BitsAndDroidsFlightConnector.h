@@ -8,6 +8,8 @@
 #ifndef ARDUINO_SAM_DUE
 #include "SoftwareSerial.h"
 #endif
+
+
 enum sendCommands {
     sendApMasterOn = 301,
     sendApPanelHeadingLock = 302,
@@ -641,7 +643,7 @@ class BitsAndDroidsFlightConnector {
   #else
     BitsAndDroidsFlightConnector(Serial_* serial);
   #endif
-
+  char* getVersion(){return "0.9.5.5.3";}
   void send(int command);
   void switchHandling();
   void dataHandling();
