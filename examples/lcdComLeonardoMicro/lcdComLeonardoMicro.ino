@@ -3,7 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 
 //create a new connector flase = Uno/Mega, True = Leonardo/Pro Micro
-BitsAndDroidsFlightConnector connector(true);
+BitsAndDroidsFlightConnector connector = BitsAndDroidsFlightConnector();
 //16x2 I2C display
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
