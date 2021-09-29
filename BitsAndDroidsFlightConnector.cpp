@@ -26,7 +26,18 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
 }
 
 #endif
-
+int BitsAndDroidsFlightConnector::smoothPot(byte potPin) {
+    int readings[samples] = {};
+    total = 0;
+    for (int &reading : readings) {
+        total = total - reading;
+        reading = analogRead(potPin);
+        total = total + reading;
+        delay(1);
+    }
+    average = total / samples;
+    return average;
+}
 void
 BitsAndDroidsFlightConnector::sendSetYokeAxis(byte elevatorPin, bool reversedElevator, byte aileronPin, bool reversedAileron,
                                        int minVal, int maxVal) {
@@ -157,52 +168,52 @@ void BitsAndDroidsFlightConnector::switchHandling() {
         // Ap
 
         // lights
-        case 33: {
+        case 133: {
             lightTaxiOn = convBool(cutValue);
             break;
         }
-        case 34: {
+        case 134: {
             lightStrobeOn = convBool(cutValue);
             break;
         }
 
-        case 35: {
+        case 135: {
             lightPanelOn = convBool(cutValue);
             break;
         }
-        case 36: {
+        case 136: {
             lightRecognitionOn = convBool(cutValue);
             break;
         }
-        case 37: {
+        case 137: {
             lightWingOn = convBool(cutValue);
             break;
         }
-        case 38: {
+        case 138: {
             lightLogoOn = convBool(cutValue);
             break;
         }
-        case 39: {
+        case 139: {
             lightCabinOn = convBool(cutValue);
             break;
         }
-        case 40: {
+        case 140: {
             lightHeadOn = convBool(cutValue);
             break;
         }
-        case 41: {
+        case 141: {
             lightBrakeOn = convBool(cutValue);
             break;
         }
-        case 42: {
+        case 142: {
             lightNavOn = convBool(cutValue);
             break;
         }
-        case 43: {
+        case 143: {
             lightBeaconOn = convBool(cutValue);
             break;
         }
-        case 44: {
+        case 144: {
             lightLandingOn = convBool(cutValue);
             break;
         }
