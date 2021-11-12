@@ -242,6 +242,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
         //GPS
         case 454: {
             gpsCourseToSteer = cutValue.toInt();
+            break;
         }
 
         // Flaps
