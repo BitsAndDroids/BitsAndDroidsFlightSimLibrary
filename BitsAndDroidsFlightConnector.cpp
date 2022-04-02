@@ -160,7 +160,7 @@ void BitsAndDroidsFlightConnector::dataHandling() {
 void BitsAndDroidsFlightConnector::switchHandling() {
 
     prefix = receivedValue.substring(0, 3);
-    cutValue = receivedValue.substring(3);
+    cutValue = receivedValue.substring(4);
     int prefixVal = prefix.toInt();
     lastPrefix = prefixVal;
 
