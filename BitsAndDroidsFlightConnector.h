@@ -636,6 +636,9 @@ enum sendCommands {
 class BitsAndDroidsFlightConnector {
   // user-accessible "public" interface
  public:
+
+    int getFuelLevel(){return fuelLevel;};
+
     BitsAndDroidsFlightConnector();
     BitsAndDroidsFlightConnector(HardwareSerial* serial);
   #ifndef ARDUINO_SAM_DUE
@@ -643,7 +646,7 @@ class BitsAndDroidsFlightConnector {
   #else
     BitsAndDroidsFlightConnector(Serial_* serial);
   #endif
-  char* getVersion(){return "0.9.5.5.3";}
+  String getVersion(){return "0.9.9.9";}
   void send(int command);
   void switchHandling();
   void dataHandling();
@@ -656,8 +659,8 @@ class BitsAndDroidsFlightConnector {
   void sendSetElevatorTrim(int value);
   void sendFlaps();
   void setPotFlaps(byte flapsPin);
-  void sendSetBrakePot(byte leftPin, byte rightPin,int minVal, int maxVal);
-  void sendSetYokeAxis(byte elevatorPin,bool reversedElevator, byte aileronPin, bool reversedAileron, int minVal, int maxVal);
+  void sendSetBrakePot(byte leftPin, byte rightPin);
+  void sendSetYokeAxis(byte elevatorPin, byte aileronPin);
   void sendSetRudderPot(byte potPin);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
   void setEMA_a(float a);
@@ -671,7 +674,7 @@ class BitsAndDroidsFlightConnector {
   bool getOnGround(){return onGround;};
   // Ap
   int getApVerticalSpeed(){return apVerticalSpeed;};
-  int getApAltLock(){return apAltLock;};
+  long int getApAltLock(){return apAltLock;};
 
   // GPS
   int getGpsCourseToSteer(){return gpsCourseToSteer;};
@@ -838,6 +841,9 @@ float getFuelTankLeftQuantity(){return fuelTankLeftQuantity;};
 float getFuelTankRightQuantity(){return fuelTankRightQuantity;};
 int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
 
+    bool getMasterWarningOn() const { return masterWarningOn; };
+
+    bool getMasterCautionOn() const { return masterCautionOn; };
 
 
   // Plane data
@@ -857,6 +863,8 @@ int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
   int smoothPot(byte potPin);
 
 private:
+
+  int fuelLevel;
   //--------------------------------------------
   // TRANSMIT DATA
   // These values can be ommited and printed to serial directly
@@ -864,22 +872,22 @@ private:
 
   Stream* serial;
 
-
-
-
-
+  int analogDiff = 1;
 
   byte lastPrefix = 0;
 
   String inputText;
-  String convertToFreq(String unprocVal);
-  String convertToNavFreq(String unprocVal);
+  String convertToFreq(const String& unprocFreq);
+  String convertToNavFreq(const String& unprocFreq);
+  bool masterWarningOn = false;
+  bool masterCautionOn = false;
+
 
 
   int apVerticalSpeed;
   int kohlmanAltimeter;
   int barPressure;
-  int apAltLock;
+  long int apAltLock;
   int apHeadingLock;
 
   int indicatedAirspeed;

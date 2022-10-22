@@ -1,6 +1,7 @@
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 #include "Arduino.h"
 #include "BitsAndDroidsFlightConnector.h"
 
@@ -9,16 +10,18 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector() {
     this->serial = &Serial;
 }
 
-BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(HardwareSerial* serial) {
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(HardwareSerial *serial) {
     this->serial = serial;
 
 }
 
 #ifndef ARDUINO_SAM_DUE
+
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
-        SoftwareSerial* serial) {
+        SoftwareSerial *serial) {
     this->serial = serial;
 }
+
 #else
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
         Serial_* serial) {
@@ -26,10 +29,11 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
 }
 
 #endif
+
 int BitsAndDroidsFlightConnector::smoothPot(byte potPin) {
     int readings[samples] = {};
     total = 0;
-    for (int &reading : readings) {
+    for (int &reading: readings) {
         total = total - reading;
         reading = analogRead(potPin);
         total = total + reading;
@@ -38,21 +42,16 @@ int BitsAndDroidsFlightConnector::smoothPot(byte potPin) {
     average = total / samples;
     return average;
 }
+
 void
-BitsAndDroidsFlightConnector::sendSetYokeAxis(byte elevatorPin, bool reversedElevator, byte aileronPin, bool reversedAileron,
-                                       int minVal, int maxVal) {
+BitsAndDroidsFlightConnector::sendSetYokeAxis(byte elevatorPin, byte aileronPin) {
 
     elevator = smoothPot(elevatorPin);
-    if (reversedElevator) {
-        elevator = 1023 - elevator;
-    }
+
 
     aileron = smoothPot(aileronPin);
-    if (reversedAileron) {
-        aileron = 1023 - aileron;
-    }
 
-    if (elevator != oldElevator || oldAileron != aileron) {
+    if (abs(elevator - oldElevator) > analogDiff || abs(oldAileron - aileron) > analogDiff) {
         packagedData = sprintf(valuesBuffer, "%s %i %i", "103", elevator,
                                aileron);
         oldElevator = elevator;
@@ -94,40 +93,33 @@ void BitsAndDroidsFlightConnector::sendSetElevatorTrimPot(byte potPin, int minVa
     }
 }
 
-void BitsAndDroidsFlightConnector::sendSetBrakePot(byte leftPin, byte rightPin, int minVal, int maxVal) {
-    currentLeftBrake = (EMA_a * analogRead(leftPin)) + ((1 - EMA_a) * currentLeftBrake);
-    currentRightBrake = (EMA_a * analogRead(rightPin)) + ((1 - EMA_a) * currentRightBrake);
+void BitsAndDroidsFlightConnector::sendSetBrakePot(byte leftPin, byte rightPin) {
+    currentLeftBrake = smoothPot(leftPin);
+    currentRightBrake = smoothPot(rightPin);
 
     bool changed = false;
-    if (oldLeftBrake != currentLeftBrake) {
-
-        leftBrakeFormated = calculateAxis(currentLeftBrake, minVal, maxVal);
+    if (abs(oldLeftBrake - currentLeftBrake) > analogDiff) {
         oldLeftBrake = currentLeftBrake;
         changed = true;
     }
-    if (oldRightBrake != currentRightBrake) {
-
-        rightBrakeFormated = calculateAxis(currentRightBrake, minVal, maxVal);
+    if (abs(oldRightBrake - currentRightBrake) > analogDiff) {
         oldRightBrake = currentRightBrake;
         changed = true;
     }
-
-
     if (changed) {
-        packagedData = sprintf(valuesBuffer, "%s %i %i", "902", leftBrakeFormated, rightBrakeFormated);
+        packagedData = sprintf(valuesBuffer, "%s %i %i", "902", currentLeftBrake, currentRightBrake);
         this->serial->println(valuesBuffer);
-        delay(50);
     }
 }
 
+
 void BitsAndDroidsFlightConnector::sendSetRudderPot(byte potPin) {
     currentRudder = smoothPot(potPin);
-    if (currentRudder != oldRudderAxis) {
+    if (abs(currentRudder - oldRudderAxis) > analogDiff) {
         packagedData = sprintf(valuesBuffer, "%s %i", "901", currentRudder);
         oldRudderAxis = currentRudder;
         this->serial->println(valuesBuffer);
     }
-
 }
 
 int BitsAndDroidsFlightConnector::calculateAxis(int value, int minVal, int maxVal) {
@@ -140,7 +132,7 @@ void BitsAndDroidsFlightConnector::sendSetElevatorTrim(int value) {
 }
 
 
-bool convBool(String input) {
+bool convBool(const String& input) {
     if (input == "0") {
         return false;
     } else {
@@ -157,16 +149,25 @@ void BitsAndDroidsFlightConnector::dataHandling() {
 
 }
 
+
 void BitsAndDroidsFlightConnector::switchHandling() {
 
-    prefix = receivedValue.substring(0, 3);
+    prefix = receivedValue.substring(0, 4);
     cutValue = receivedValue.substring(4);
     int prefixVal = prefix.toInt();
     lastPrefix = prefixVal;
 
     switch (prefixVal) {
         // Ap
+        case 4000:{
+            fuelLevel = cutValue.toInt();
+            break;
+        }
 
+        case 1003:{
+            lightTaxiOn = true;
+            break;
+        }
         // lights
         case 133: {
             lightTaxiOn = convBool(cutValue);
@@ -230,7 +231,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // warnings
+            // warnings
         case 333: {
             stallWarning = convBool(cutValue);
             break;
@@ -239,13 +240,12 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             overspeedWarning = convBool(cutValue);
             break;
         }
-        //GPS
+            //GPS
         case 454: {
             gpsCourseToSteer = cutValue.toInt();
-            break;
         }
 
-        // Flaps
+            // Flaps
         case 510: {
             flapsHandlePct = cutValue.toInt();
             break;
@@ -291,7 +291,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // Gears
+            // Gears
         case 526: {
             gearHandlePos = convBool(cutValue);
             break;
@@ -322,6 +322,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
         }
         case 533: {
             gearAuxPosition = cutValue.toInt();
+            gearAuxPosition = cutValue.toInt();
             break;
         }
         case 536: {
@@ -329,7 +330,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // AP
+            // AP
         case 576: {
             APAvailable = convBool(cutValue);
             break;
@@ -354,6 +355,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             APAltitudeLockOn = convBool(cutValue);
             break;
         }
+
         case 585: {
             APAttitudeLockOn = convBool(cutValue);
             break;
@@ -407,7 +409,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // Rudder trim
+            // Rudder trim
         case 498: {
             elevatorTrimPos = cutValue.toInt();
             break;
@@ -515,7 +517,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             navVorLationalt1 = cutValue.toInt();
             break;
         }
-        // DME
+            // DME
         case 950: {
             navDme1 = cutValue;
             break;
@@ -533,7 +535,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // ADF
+            // ADF
         case 954: {
             adfActiveFreq1 = cutValue;
             break;
@@ -551,11 +553,11 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
         case 958: {
-            adfActiveFreq2 = cutValue;
+            adfActiveFreq2 = convertToNavFreq(cutValue);
             break;
         }
         case 959: {
-            adfStandbyFreq2 = cutValue;
+            adfStandbyFreq2 = convertToNavFreq(cutValue);
             break;
         }
         case 960: {
@@ -567,7 +569,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // Transponder
+            // Transponder
         case 962: {
             transponderCode1 = cutValue;
             break;
@@ -577,7 +579,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
-        // PLANE DATA
+            // PLANE DATA
         case 999: {
             planeName = cutValue;
             break;
@@ -775,6 +777,14 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             parkingBrakeIndicator = convBool(cutValue);
             break;
         }
+        case 1000: {
+            masterCautionOn = convBool(cutValue);
+            break;
+        }
+        case 1001: {
+            masterWarningOn = convBool(cutValue);
+            break;
+        }
 
 
         default:
@@ -783,9 +793,8 @@ void BitsAndDroidsFlightConnector::switchHandling() {
 
 }
 
-
 void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
-                                               int propPin2) {
+                                                      int propPin2) {
     bool changed = false;
     propValue1 = smoothPot(propPin1);
     propValue2 = smoothPot(propPin2);
@@ -809,7 +818,7 @@ void BitsAndDroidsFlightConnector::propsInputHandling(int propPin1,
 }
 
 void BitsAndDroidsFlightConnector::mixtureInputHandling(int mixturePin1,
-                                                 int mixturePin2) {
+                                                        int mixturePin2) {
     bool changed = false;
     mixtureValue1 = smoothPot(mixturePin1);
     mixtureValue2 = smoothPot(mixturePin2);
@@ -907,6 +916,18 @@ void BitsAndDroidsFlightConnector::setEMA_a(float a) { EMA_a = a; }
 
 void BitsAndDroidsFlightConnector::send(int command) {
     Serial.println(command);
+}
+
+String BitsAndDroidsFlightConnector::convertToFreq(const String &unprocFreq) {
+    String stringA = unprocFreq.substring(0, 3);
+    String stringB = unprocFreq.substring(3);
+    return stringA + "." + stringB;
+}
+
+String BitsAndDroidsFlightConnector::convertToNavFreq(const String &unprocFreq) {
+    String stringA = unprocFreq.substring(0, 3);
+    String stringB = unprocFreq.substring(3, 5);
+    return stringA + "." + stringB;
 }
 // RECEIVING VALUES
 // GPS
