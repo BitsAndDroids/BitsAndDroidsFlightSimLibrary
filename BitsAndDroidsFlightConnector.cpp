@@ -231,6 +231,19 @@ void BitsAndDroidsFlightConnector::switchHandling() {
             break;
         }
 
+        // time
+        case 338: {
+            localTime = cutValue;
+            break;
+        }
+        case 339: {
+            timezoneOffset = cutValue.toInt();
+            break;
+        }
+        case 340: {
+            zuluTime = cutValue;
+            break;
+        }
             // warnings
         case 333: {
             stallWarning = convBool(cutValue);

@@ -1049,6 +1049,16 @@ byte fuelTankExternal2Level;
   String adfRadial2 = "";
   String adfSignal2 = "";
 
+  //time
+  String zuluTime = "";
+  String getZuluTime(){return zuluTime;};
+
+  int timezoneOffset = "";
+  int getTimezoneOffset(){return getTimezoneOffset;};
+
+  String localTime = "";
+  String getLocalTime(){return localTime;};
+
   // Transponder
   String transponderCode1 = "";
   String transponderCode2 = "";
