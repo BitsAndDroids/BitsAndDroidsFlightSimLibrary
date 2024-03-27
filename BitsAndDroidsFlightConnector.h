@@ -861,6 +861,11 @@ int getFuelTankTotalQuantity(){return fuelTankTotalQuantity;};
   // library-accessible "private" interface
 
   int smoothPot(byte potPin);
+  // Time data
+
+  String getZuluTime(){return zuluTime;};
+  int getTimezoneOffset(){return timezoneOffset;};
+  String getLocalTime(){return localTime;};
 
 private:
 
@@ -1051,13 +1056,8 @@ byte fuelTankExternal2Level;
 
   //time
   String zuluTime = "";
-  String getZuluTime(){return zuluTime;};
-
-  int timezoneOffset = "";
-  int getTimezoneOffset(){return getTimezoneOffset;};
-
+  int timezoneOffset;
   String localTime = "";
-  String getLocalTime(){return localTime;};
 
   // Transponder
   String transponderCode1 = "";
