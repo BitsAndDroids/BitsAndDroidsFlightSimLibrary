@@ -774,6 +774,10 @@ public:
   // Transponder
   String getTransponderCode1() { return transponderCode1; };
   String getTransponderCode2() { return transponderCode2; };
+  uint8_t getTransponderIdent1() { return transponderIdent1; };
+  uint8_t getTransponderIdent2() { return transponderIdent2; };
+  uint8_t getTransponderState1() { return transponderState1; };
+  uint8_t getTransponderState2() { return transponderState2; };
 
   // AP
   bool getAPAvailable() { return APAvailable; };
@@ -1051,6 +1055,10 @@ private:
   // Transponder
   String transponderCode1 = "";
   String transponderCode2 = "";
+  uint8_t transponderIdent1 = 0;
+  uint8_t transponderIdent2 = 0;
+  uint8_t transponderState1 = 0;
+  uint8_t transponderState2 = 0;
 
   // Flaps
   byte flapsHandlePct;

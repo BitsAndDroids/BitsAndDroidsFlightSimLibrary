@@ -590,6 +590,22 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     transponderCode2 = cutValue;
     break;
   }
+  case 608: {
+    transponderIdent1 = cutValue.toInt();
+    break;
+  }
+  case 609: {
+    transponderState1 = cutValue.toInt();
+    break;
+  }
+  case 610: {
+    transponderIdent2 = cutValue.toInt();
+    break;
+  }
+  case 611: {
+    transponderState2 = cutValue.toInt();
+    break;
+  }
 
     // PLANE DATA
   case 999: {
