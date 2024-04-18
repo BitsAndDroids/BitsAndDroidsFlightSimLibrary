@@ -3,8 +3,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "Arduino.h"
-#include "ArduinoSTL.h"
-#
+
 #include "BitsAndDroidsFlightConnector.h"
 
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector() {
