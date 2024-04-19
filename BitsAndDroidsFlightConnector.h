@@ -63,6 +63,8 @@ enum sendCommands {
   sendAdf10Dec = 169,
   sendAdf1Dec = 170,
   sendAdfCompleteSet = 179,
+  sendAdf1TenthsInc = 390,
+  sendAdf1TenthsDec = 391,
   sendAdf1WholeInc = 180,
   sendAdf1WholeDec = 181,
   sendAdf2100Inc = 182,
