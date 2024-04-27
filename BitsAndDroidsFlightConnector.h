@@ -10,6 +10,7 @@
 #endif
 
 enum sendCommands {
+
   sendApMasterOn = 301,
   sendApPanelHeadingLock = 302,
   sendAPPanelAltitudeHold = 303,
@@ -36,9 +37,12 @@ enum sendCommands {
   sendToggleMasterBattery1 = 405,
   sendToggleMasterBattery2 = 406,
   sendToggleExternalPower = 408,
-
   sendToggleMasterAlternator = 407,
 
+  sendXpndrIdentOff = 103,
+  sendXpndrIdentOn = 104,
+  sendXpndrIdentToggle = 105,
+  sendXpndrSet = 106,
   sendXpndr1000Inc = 171,
   sendXpndr100Inc = 172,
   sendXpndr10Inc = 173,
@@ -47,7 +51,6 @@ enum sendCommands {
   sendXpndr100Dec = 176,
   sendXpndr10Dec = 177,
   sendXpndr1Dec = 178,
-  sendXpndrSet = 202,
 
   sendSelectedAdfIdentEnable = 158,
   sendSelectedAdfIdentDisable = 159,
