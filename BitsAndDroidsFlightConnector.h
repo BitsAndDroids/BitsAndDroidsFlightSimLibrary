@@ -847,6 +847,13 @@ public:
   float getFuelTankRightQuantity() { return fuelTankRightQuantity; };
   int getFuelTankTotalQuantity() { return fuelTankTotalQuantity; };
 
+  int getAmbientTemperature() { return ambientTemperature; };
+  int getAmbientPressure() { return ambientPressure; };
+  int getAmbientWindVelocity() { return ambientWindVelocity; };
+  int getAmbientWindDirection() { return ambientWindDirection; };
+  int getAmbientPrecipRate() { return ambientPrecipRate; };
+  int getAmbientPrecipState() { return ambientPrecipState; };
+
   bool getMasterWarningOn() const { return masterWarningOn; };
 
   bool getMasterCautionOn() const { return masterCautionOn; };
@@ -914,6 +921,14 @@ private:
   bool lightNavOn = false;
   bool lightBeaconOn = false;
   bool lightLandingOn = false;
+
+  // ambient
+  int ambientTemperature;
+  int ambientPressure;
+  int ambientWindVelocity;
+  int ambientWindDirection;
+  int ambientPrecipRate;
+  int ambientPrecipState;
 
   // AP
   bool APAvailable = false;

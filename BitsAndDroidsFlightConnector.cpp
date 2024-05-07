@@ -228,6 +228,31 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     onGround = convBool(cutValue);
     break;
   }
+  // ambient
+  case 650: {
+    ambientPressure = cutValue.toInt();
+    break;
+  }
+  case 651: {
+    ambientTemperature = cutValue.toInt();
+    break;
+  }
+  case 652: {
+    ambientWindVelocity = cutValue.toInt();
+    break;
+  }
+  case 653: {
+    ambientWindDirection = cutValue.toInt();
+    break;
+  }
+  case 654: {
+    ambientPrecipRate = cutValue.toInt();
+    break;
+  }
+  case 655: {
+    ambientPrecipState = cutValue.toInt();
+    break;
+  }
 
   // time
   case 338: {
