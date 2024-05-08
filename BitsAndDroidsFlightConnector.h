@@ -854,6 +854,10 @@ public:
   int getAmbientPrecipRate() { return ambientPrecipRate; };
   int getAmbientPrecipState() { return ambientPrecipState; };
 
+  int getHeadingGyro() { return headingGyro; };
+  int getHeadingMag() { return headingMag; };
+  int getHeadingTrue() { return headingTrue; };
+
   bool getMasterWarningOn() const { return masterWarningOn; };
 
   bool getMasterCautionOn() const { return masterCautionOn; };
@@ -907,6 +911,10 @@ private:
   int indicatedHeading;
   int indicatedGPSGroundspeed;
   int trueVerticalSpeed;
+
+  int headingGyro;
+  int headingMag;
+  int headingTrue;
 
   // lights
   bool lightTaxiOn = false;

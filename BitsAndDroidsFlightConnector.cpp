@@ -253,6 +253,18 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     ambientPrecipState = cutValue.toInt();
     break;
   }
+  case 656: {
+    headingGyro = cutValue.toInt();
+    break;
+  }
+  case 657: {
+    headingMag = cutValue.toInt();
+    break;
+  }
+  case 658: {
+    headingTrue = cutValue.toInt();
+    break;
+  }
 
   // time
   case 338: {
