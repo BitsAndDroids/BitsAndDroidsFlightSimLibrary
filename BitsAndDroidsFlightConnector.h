@@ -847,9 +847,9 @@ public:
   float getFuelTankRightQuantity() { return fuelTankRightQuantity; };
   int getFuelTankTotalQuantity() { return fuelTankTotalQuantity; };
 
-  int getAmbientTemperature() { return ambientTemperature; };
+  float getAmbientTemperature() { return ambientTemperature; };
   int getAmbientPressure() { return ambientPressure; };
-  int getAmbientWindVelocity() { return ambientWindVelocity; };
+  float getAmbientWindVelocity() { return ambientWindVelocity; };
   int getAmbientWindDirection() { return ambientWindDirection; };
   int getAmbientPrecipRate() { return ambientPrecipRate; };
   int getAmbientPrecipState() { return ambientPrecipState; };
@@ -923,9 +923,9 @@ private:
   bool lightLandingOn = false;
 
   // ambient
-  int ambientTemperature;
+  float ambientTemperature;
   int ambientPressure;
-  int ambientWindVelocity;
+  float ambientWindVelocity;
   int ambientWindDirection;
   int ambientPrecipRate;
   int ambientPrecipState;

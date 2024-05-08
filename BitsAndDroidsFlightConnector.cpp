@@ -234,11 +234,11 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     break;
   }
   case 651: {
-    ambientTemperature = cutValue.toInt();
+    ambientTemperature = cutValue.toFloat();
     break;
   }
   case 652: {
-    ambientWindVelocity = cutValue.toInt();
+    ambientWindVelocity = cutValue.toFloat();
     break;
   }
   case 653: {
