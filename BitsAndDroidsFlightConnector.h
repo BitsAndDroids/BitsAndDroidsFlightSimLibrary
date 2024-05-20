@@ -662,6 +662,7 @@ public:
   void sendSetYokeAxis(byte elevatorPin, byte aileronPin);
   void sendSetRudderPot(byte potPin);
   void sendSetElevatorTrimPot(byte potPin, int minVal, int maxVal);
+  void sendSetKohlmanAltimeterInHg(float kohlmanInhg);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal, bool reversed);
   // void setSampleSize(byte amntSamples){sampleSize = amntSamples;};
