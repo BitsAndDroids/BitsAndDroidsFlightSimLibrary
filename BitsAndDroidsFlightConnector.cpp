@@ -265,6 +265,10 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     headingTrue = cutValue.toInt();
     break;
   }
+  case 659: {
+    indicatedAltitudeCalibrated = cutValue.toInt();
+    break;
+  }
 
   // time
   case 338: {
@@ -849,7 +853,10 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     masterWarningOn = convBool(cutValue);
     break;
   }
-
+  // DO NOT REMOVE THIS COMMENT ITS USED BY THE CONNECTOR TO GENERATE CUSTOM
+  // EVENTS
+  // START CASE TEMPLATE
+  // END CASE TEMPLATE
   default:
     break;
   }

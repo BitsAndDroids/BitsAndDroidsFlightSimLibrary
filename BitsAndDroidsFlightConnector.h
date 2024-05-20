@@ -686,6 +686,7 @@ public:
 
   int getIndicatedAirspeed() { return indicatedAirspeed; };
   int getIndicatedAltitude() { return indicatedAltitude; };
+  int getIndicatedAltitudeCalibrated() { return indicatedAltitudeCalibrated; };
   int getIndicatedHeading() { return indicatedHeading; };
   int getIndicatedGPSGroundspeed() { return indicatedGPSGroundspeed; };
   int getTrueVerticalSpeed() { return trueVerticalSpeed; };
@@ -881,6 +882,11 @@ public:
   int getTimezoneOffset() { return timezoneOffset; };
   String getLocalTime() { return localTime; };
 
+  // DO NOT REMOVE THIS COMMENT ITS USED BY THE CONNECTOR TO GENERATE CUSTOM
+  // EVENTS
+  // START GETTER TEMPLATE
+  // END GETTER TEMPLATE
+
 private:
   int fuelLevel;
   //--------------------------------------------
@@ -908,6 +914,7 @@ private:
 
   int indicatedAirspeed;
   int indicatedAltitude;
+  int indicatedAltitudeCalibrated;
   int indicatedHeading;
   int indicatedGPSGroundspeed;
   int trueVerticalSpeed;
@@ -1163,6 +1170,10 @@ private:
   int average = 0;
   int total = 0;
 
+  // DO NOT REMOVE THIS COMMENT ITS USED BY THE CONNECTOR TO GENERATE CUSTOM
+  // EVENTS
+  // START VAR TEMPLATE
+  // END VAR TEMPLATE
   static const int samples = 10;
 };
 
