@@ -124,13 +124,15 @@ void BitsAndDroidsFlightConnector::sendSetRudderPot(byte potPin) {
 
 void BitsAndDroidsFlightConnector::sendSetKohlmanAltimeterInHg(float value) {
   float mbValue = value * 33.8639;
-  float valueToSend = mbValue * 16.0;
-  this->serial->println("377 " + String(valueToSend));
+  int valueToSend = mbValue * 16;
+  packagedData = sprintf(valuesBuffer, "%s %d", "377", valueToSend);
+  this->serial->println(valuesBuffer);
 }
 
 void BitsAndDroidsFlightConnector::sendSetKohlmanAltimeterMb(float value) {
-  float valueToSend = value * 16.0;
-  this->serial->println("377 " + String(valueString));
+  int valueToSend = value * 16;
+  packagedData = sprintf(valuesBuffer, "%s %d", "377", valueToSend);
+  this->serial->println(valuesBuffer);
 }
 
 int BitsAndDroidsFlightConnector::calculateAxis(int value, int minVal,
