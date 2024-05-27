@@ -14,7 +14,7 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector() {
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(Serial_ *serial) {
   this->serial = serial;
 }
-#elif defined(ESP32) || defined(ESP8266)
+#elif defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
     HardwareSerial *serial) {
   this->serial = &Serial;
@@ -863,14 +863,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
     parkingBrakeIndicator = convBool(cutValue);
     break;
   }
-  case 1000: {
-    masterCautionOn = convBool(cutValue);
-    break;
-  }
-  case 1001: {
-    masterWarningOn = convBool(cutValue);
-    break;
-  }
+
   // DO NOT REMOVE THIS COMMENT ITS USED BY THE CONNECTOR TO GENERATE CUSTOM
   // EVENTS
   // START CASE TEMPLATE
