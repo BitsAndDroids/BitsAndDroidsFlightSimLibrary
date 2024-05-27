@@ -687,7 +687,9 @@ public:
   byte getFuelTotalPercentage() { return fuelTotalPercentage; };
 
   int getIndicatedAirspeed() { return indicatedAirspeed; };
+  int getVarometerRate() { return varometerRate; };
   int getIndicatedAltitude() { return indicatedAltitude; };
+  int getIndicatedAltitude2() { return indicatedAltitude2; };
   int getIndicatedAltitudeCalibrated() { return indicatedAltitudeCalibrated; };
   int getIndicatedHeading() { return indicatedHeading; };
   int getIndicatedGPSGroundspeed() { return indicatedGPSGroundspeed; };
@@ -915,7 +917,9 @@ private:
   int apHeadingLock;
 
   int indicatedAirspeed;
+  int varometerRate;
   int indicatedAltitude;
+  int indicatedAltitude2;
   int indicatedAltitudeCalibrated;
   int indicatedHeading;
   int indicatedGPSGroundspeed;
