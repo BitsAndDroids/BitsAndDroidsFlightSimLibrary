@@ -10,23 +10,25 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector() {
   this->serial = &Serial;
 }
 
-BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
-    HardwareSerial *serial) {
-  this->serial = serial;
-}
-
-#ifndef ARDUINO_SAM_DUE
-
+#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32)
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
     SoftwareSerial *serial) {
   this->serial = serial;
 }
-
-#else
+#elif defined(ARDUINO_SAM_DUE)
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(Serial_ *serial) {
   this->serial = serial;
 }
-
+#elif defined(ESP32)
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
+    HardwareSerial *serial) {
+  this->serial = &Serial;
+}
+#else
+BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
+    SoftwareSerial *serial) {
+  this->serial = serial;
+}
 #endif
 
 int BitsAndDroidsFlightConnector::smoothPot(byte potPin) {
