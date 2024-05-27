@@ -5,7 +5,7 @@
 #ifndef BitsAndDroidsFlightConnector_h
 #define BitsAndDroidsFlightConnector_h
 
-#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32)
+#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32) && !defined(ESP8266)
 #include "SoftwareSerial.h"
 #endif
 
@@ -639,11 +639,12 @@ public:
   BitsAndDroidsFlightConnector();
 #if defined(ARDUINO_SAM_DUE)
   BitsAndDroidsFlightConnector(Serial_ *serial);
-#elif !defined(                                                                \
-    ESP32) // This will handle all boards except ESP32 and Arduino Due
-  BitsAndDroidsFlightConnector(SoftwareSerial *serial);
-#else      // This handles the ESP32 and other boards with HardwareSerial
+#elif defined(ESP32) ||                                                        \
+    defined(                                                                   \
+        ESP8266) // This will handle all boards except ESP32 and Arduino Due
   BitsAndDroidsFlightConnector(HardwareSerial *serial);
+#else            // This handles the ESP32 and other boards with HardwareSerial
+  BitsAndDroidsFlightConnector(SoftwareSerial *serial);
 #endif
   String getVersion() { return "0.9.9.9"; }
   void send(int command);

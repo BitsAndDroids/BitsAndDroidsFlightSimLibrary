@@ -10,16 +10,11 @@ BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector() {
   this->serial = &Serial;
 }
 
-#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32)
-BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
-    SoftwareSerial *serial) {
-  this->serial = serial;
-}
-#elif defined(ARDUINO_SAM_DUE)
+#if defined(ARDUINO_SAM_DUE)
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(Serial_ *serial) {
   this->serial = serial;
 }
-#elif defined(ESP32)
+#elif defined(ESP32) || defined(ESP8266)
 BitsAndDroidsFlightConnector::BitsAndDroidsFlightConnector(
     HardwareSerial *serial) {
   this->serial = &Serial;
