@@ -5,7 +5,8 @@
 #ifndef BitsAndDroidsFlightConnector_h
 #define BitsAndDroidsFlightConnector_h
 
-#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32) && !defined(ESP8266)
+#if !defined(ARDUINO_SAM_DUE) && !defined(ESP32) && !defined(ESP8266) &&       \
+    !defined(PICO_RP2040)
 #include "SoftwareSerial.h"
 #endif
 
@@ -630,6 +631,8 @@ enum sendCommands {
   sendSimPauseOff = 909
 };
 
+#define SEND_GET_COMMAND 999
+
 // library interface description
 class BitsAndDroidsFlightConnector {
   // user-accessible "public" interface
@@ -656,8 +659,10 @@ public:
   void superAdvancedInputHandling(byte eng1Percentage, byte eng2Percentage,
                                   byte eng3Percentage, byte eng4Percentage);
   void sendCombinedMixtureValues();
-  void propsInputHandling(int propPin1, int propPin2);
-  void mixtureInputHandling(int mixturePin1, int mixturePin2);
+  void propsInputHandling(int propPin1, int propPin2, int propPin3,
+                          int propPin4);
+  void mixtureInputHandling(int mixturePin1, int mixturePin2, int mixturePin3,
+                            int mixturePin4);
   void sendSetElevatorTrim(int value);
   void sendFlaps();
   void setPotFlaps(byte flapsPin);
@@ -669,6 +674,7 @@ public:
   void sendSetKohlmanAltimeterMb(float kohlmanMb);
   void setEMA_a(float a);
   byte getPercentage(int value, int minVal, float maxVal, bool reversed);
+  void sendGetValueById(int id);
   // void setSampleSize(byte amntSamples){sampleSize = amntSamples;};
   // Data
   int feetAboveGround = 0;
@@ -1012,22 +1018,26 @@ private:
   int prop2 = 0;
 
   int engines[4] = {0, 0, 0, 0};
-  int mixturePercentage[2] = {0, 0};
-  int props[2] = {0, 0};
+  int mixturePercentage[4] = {0, 0, 0, 0};
+  int props[4] = {0, 0, 0, 0};
 
   int flaps;
   int oldFlaps;
 
   int value;
-  int propValue1;
-  int propValue2;
   int oldValue;
 
   int navObs1;
   int navObs2;
 
+  int propValue1;
+  int propValue2;
+  int propValue3;
+  int propValue4;
   int oldPropValue1;
   int oldPropValue2;
+  int oldPropValue3;
+  int oldPropValue4;
 
   int valueEng1;
   int valueEng2;
@@ -1041,8 +1051,12 @@ private:
 
   int mixtureValue1;
   int mixtureValue2;
+  int mixtureValue3;
+  int mixtureValue4;
   int oldMixtureValue1;
   int oldMixtureValue2;
+  int oldMixtureValue3;
+  int oldMixtureValue4;
 
   int oldTrim;
   int currentTrim;
