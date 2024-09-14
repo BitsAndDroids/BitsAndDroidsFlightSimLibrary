@@ -639,6 +639,8 @@ class BitsAndDroidsFlightConnector {
 public:
   int getFuelLevel() { return fuelLevel; };
 
+  int connected = 0;
+
   BitsAndDroidsFlightConnector();
 #if defined(ARDUINO_SAM_DUE)
   BitsAndDroidsFlightConnector(Serial_ *serial);
@@ -652,6 +654,8 @@ public:
   String getVersion() { return "0.9.9.9"; }
   void send(int command);
   void switchHandling();
+  int getConnected() { return connected; };
+  void checkConnection();
   void dataHandling();
   void simpleInputHandling(int throttlePin);
   void advancedInputHandling(int eng1Pin, int eng2Pin, int eng3Pin,

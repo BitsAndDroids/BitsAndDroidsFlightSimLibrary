@@ -164,6 +164,9 @@ void BitsAndDroidsFlightConnector::dataHandling() {
     switchHandling();
   }
 }
+void BitsAndDroidsFlightConnector::checkConnection() {
+  this->sendGetValueById(1);
+}
 
 void BitsAndDroidsFlightConnector::switchHandling() {
 
@@ -173,6 +176,10 @@ void BitsAndDroidsFlightConnector::switchHandling() {
   lastPrefix = prefixVal;
 
   switch (prefixVal) {
+  case 1: {
+    connected = cutValue.toInt();
+    break;
+  }
   // Ap
   case 4000: {
     fuelLevel = cutValue.toInt();
@@ -874,30 +881,7 @@ void BitsAndDroidsFlightConnector::switchHandling() {
   // DO NOT REMOVE THIS COMMENT ITS USED BY THE CONNECTOR TO GENERATE CUSTOM
   // EVENTS
   // START CASE TEMPLATE
-  case 6011: {
-    output6011 = cutValue.toInt();
-    break;
-  }
 
-  case 1001: {
-    output1001 = cutValue.toInt();
-    break;
-  }
-
-  case 1000: {
-    output1000 = cutValue.toInt();
-    break;
-  }
-
-  case 6010: {
-    output6010 = cutValue.toInt();
-    break;
-  }
-
-  case 6012: {
-    output6012 = cutValue.toInt();
-    break;
-  }
   // END CASE TEMPLATE
   default:
     break;
