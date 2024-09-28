@@ -1,7 +1,6 @@
 #pragma clang diagnostic pop
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-
 #include "Arduino.h"
 
 #include "BitsAndDroidsFlightConnector.h"
